@@ -1,0 +1,64 @@
+{
+  "_comment": "Tradition tree. IDs are dotted paths; a child's ID starts with its parent's ID. Items tag the most specific tradition they are about. Results roll up to every ancestor. Never rename or reuse an ID: deprecate it and add a new one.",
+  "traditions": [
+    {"id": "shared", "name": "Shared by all Buddhist traditions", "note": "Use only when every tradition's reviewers accept the answer."},
+
+    {"id": "early", "name": "Early and mainstream Indian Buddhism", "note": "Nikāyas, Āgamas, the early schools."},
+    {"id": "early.sarvastivada", "name": "Sarvāstivāda"},
+    {"id": "early.mahasanghika", "name": "Mahāsāṅghika"},
+    {"id": "early.sautrantika", "name": "Sautrāntika"},
+
+    {"id": "theravada", "name": "Theravāda"},
+    {"id": "theravada.sri-lanka", "name": "Sri Lankan Theravāda"},
+    {"id": "theravada.myanmar", "name": "Burmese Theravāda"},
+    {"id": "theravada.thailand", "name": "Thai Theravāda"},
+    {"id": "theravada.thailand.forest", "name": "Thai Forest Tradition"},
+    {"id": "theravada.laos-cambodia", "name": "Lao and Cambodian Theravāda"},
+    {"id": "theravada.vipassana-movement", "name": "Modern vipassanā movements"},
+
+    {"id": "indian-mahayana", "name": "Indian Mahāyāna"},
+    {"id": "indian-mahayana.madhyamaka", "name": "Madhyamaka"},
+    {"id": "indian-mahayana.yogacara", "name": "Yogācāra"},
+    {"id": "indian-mahayana.tathagatagarbha", "name": "Tathāgatagarbha thought"},
+    {"id": "indian-mahayana.pramana", "name": "Pramāṇa (epistemology) tradition"},
+    {"id": "indian-mahayana.vajrayana", "name": "Indian Vajrayāna and tantric Buddhism"},
+
+    {"id": "east-asian", "name": "East Asian Buddhism"},
+    {"id": "east-asian.chan-zen", "name": "Chan / Zen / Seon / Thiền"},
+    {"id": "east-asian.chan-zen.linji-rinzai", "name": "Linji / Rinzai"},
+    {"id": "east-asian.chan-zen.caodong-soto", "name": "Caodong / Sōtō"},
+    {"id": "east-asian.chan-zen.obaku", "name": "Ōbaku"},
+    {"id": "east-asian.chan-zen.seon", "name": "Korean Seon (incl. Jogye Order)"},
+    {"id": "east-asian.chan-zen.thien", "name": "Vietnamese Thiền"},
+    {"id": "east-asian.pure-land", "name": "Pure Land"},
+    {"id": "east-asian.pure-land.jodo-shu", "name": "Jōdo-shū"},
+    {"id": "east-asian.pure-land.jodo-shinshu", "name": "Jōdo Shinshū"},
+    {"id": "east-asian.tiantai-tendai", "name": "Tiantai / Tendai / Cheontae"},
+    {"id": "east-asian.huayan-kegon", "name": "Huayan / Kegon / Hwaeom"},
+    {"id": "east-asian.esoteric", "name": "East Asian esoteric Buddhism"},
+    {"id": "east-asian.esoteric.shingon", "name": "Shingon"},
+    {"id": "east-asian.nichiren", "name": "Nichiren Buddhism", "note": "Sub-branches (e.g. Nichiren-shū, Nichiren Shōshū, Soka Gakkai) get their own IDs when a reviewer from each joins."},
+    {"id": "east-asian.sanlun", "name": "Sanlun / Sanron"},
+    {"id": "east-asian.faxiang", "name": "Faxiang / Hossō"},
+    {"id": "east-asian.vinaya", "name": "Vinaya / Ritsu schools"},
+
+    {"id": "tibetan", "name": "Tibetan and Himalayan Buddhism"},
+    {"id": "tibetan.nyingma", "name": "Nyingma"},
+    {"id": "tibetan.kagyu", "name": "Kagyu"},
+    {"id": "tibetan.sakya", "name": "Sakya"},
+    {"id": "tibetan.gelug", "name": "Gelug"},
+    {"id": "tibetan.jonang", "name": "Jonang"},
+    {"id": "tibetan.rime", "name": "Rimé (non-sectarian) movement"},
+    {"id": "tibetan.mongolian", "name": "Mongolian Buddhism"},
+    {"id": "tibetan.bhutanese", "name": "Bhutanese Buddhism"},
+
+    {"id": "newar", "name": "Newar Buddhism"},
+
+    {"id": "modern", "name": "Modern and global movements"},
+    {"id": "modern.engaged", "name": "Engaged Buddhism"},
+    {"id": "modern.plum-village", "name": "Plum Village"},
+    {"id": "modern.western-convert", "name": "Western convert communities"},
+
+    {"id": "bon", "name": "Bön", "note": "Adjacent tradition, not a Buddhist school. Items only where Bön and Buddhist views are compared, reviewed by Bön practitioners."}
+  ]
+}

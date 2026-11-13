@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddhistBench grade",
+  "description": "Grades for short or open items that automatic matching cannot settle, from human experts or a judge panel. One per line.",
+  "type": "object",
+  "required": ["id", "grader"],
+  "properties": {
+    "id": {"type": "string"},
+    "grader": {"type": "string", "description": "Human handle, or 'panel:<model-a>,<model-b>,<model-c>' with exact model versions."},
+    "grade": {"enum": ["correct", "incorrect", "not_attempted"], "description": "For short items."},
+    "matched_tradition": {"type": "string"},
+    "criteria": {"type": "object", "additionalProperties": {"type": "boolean"}, "description": "For open items: rubric criterion id -> met."}
+  }
+}

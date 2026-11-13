@@ -1,0 +1,17 @@
+{
+  "_comment": "Topic tags. An item may have several.",
+  "topics": [
+    {"id": "history", "name": "History, councils, transmission, institutions"},
+    {"id": "figures", "name": "Teachers, founders, lineages"},
+    {"id": "canon", "name": "Canons, texts, commentaries, citations"},
+    {"id": "doctrine", "name": "Doctrine and philosophy"},
+    {"id": "practice", "name": "Meditation and contemplative practice"},
+    {"id": "ritual", "name": "Ritual, devotion, festivals, liturgy"},
+    {"id": "monastic", "name": "Monastic discipline (Vinaya) and monastic life"},
+    {"id": "ethics", "name": "Ethics, precepts, lay life"},
+    {"id": "cosmology", "name": "Cosmology, rebirth, realms"},
+    {"id": "art", "name": "Art, architecture, material culture"},
+    {"id": "language", "name": "Terminology and translation of terms"},
+    {"id": "contemporary", "name": "Contemporary communities and institutions"}
+  ]
+}

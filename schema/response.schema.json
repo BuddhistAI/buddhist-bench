@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddhistBench model response",
+  "description": "One model answer per line in a responses .jsonl file.",
+  "type": "object",
+  "required": ["id"],
+  "properties": {
+    "id": {"type": "string"},
+    "answer": {"type": "string", "description": "Choice id (mcq) or answer text (short, open)."},
+    "declined": {"type": "boolean", "description": "The model declined to answer or rejected the premise."}
+  }
+}

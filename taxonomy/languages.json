@@ -1,0 +1,23 @@
+{
+  "_comment": "Language codes allowed for data folders (BCP 47 / ISO 639). Keep in sync with BuddhistAI/buddhist-skills languages.json; add a code there too when it gains skills.",
+  "languages": [
+    {"code": "en", "name": "English"},
+    {"code": "bo", "name": "Tibetan"},
+    {"code": "zh", "name": "Chinese (modern)"},
+    {"code": "lzh", "name": "Classical Chinese"},
+    {"code": "ja", "name": "Japanese"},
+    {"code": "ko", "name": "Korean"},
+    {"code": "vi", "name": "Vietnamese"},
+    {"code": "th", "name": "Thai"},
+    {"code": "my", "name": "Burmese"},
+    {"code": "si", "name": "Sinhala"},
+    {"code": "km", "name": "Khmer"},
+    {"code": "lo", "name": "Lao"},
+    {"code": "pi", "name": "Pali"},
+    {"code": "sa", "name": "Sanskrit"},
+    {"code": "mn", "name": "Mongolian"},
+    {"code": "dz", "name": "Dzongkha"},
+    {"code": "ne", "name": "Nepali"},
+    {"code": "new", "name": "Newar (Nepal Bhasa)"}
+  ]
+}

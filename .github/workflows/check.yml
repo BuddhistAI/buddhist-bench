@@ -1,0 +1,29 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 scripts/check.py
+      - name: Scorer smoke test on example items
+        run: |
+          python3 - <<'PY'
+          import json, glob
+          with open("/tmp/resp.jsonl", "w") as f:
+              for p in glob.glob("tracks/*/data/*/example.jsonl"):
+                  for line in open(p, encoding="utf-8"):
+                      it = json.loads(line)
+                      ans = it["positions"][0]["answer"]
+                      f.write(json.dumps({"id": it["id"], "answer": ans}) + "\n")
+          PY
+          python3 scripts/score.py --include-examples --items tracks/*/data/*/example.jsonl --responses /tmp/resp.jsonl > /tmp/scores.json
+      - run: python3 scripts/export_hf.py --out build/hf

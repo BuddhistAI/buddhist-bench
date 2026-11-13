@@ -1,0 +1,15 @@
+# Default owner for everything.
+*                         @ngawangtrinley
+
+# Rules that affect every track.
+/schema/                  @ngawangtrinley
+/taxonomy/                @ngawangtrinley
+/scripts/                 @ngawangtrinley
+/prompts/                 @ngawangtrinley
+
+# Core is owned jointly; add one maintainer per tradition here.
+/tracks/core/             @ngawangtrinley
+
+# Tradition tracks. Replace with the tradition's team (e.g. @BuddhistAI/theravada) once it exists.
+/tracks/theravada/        @ngawangtrinley
+/tracks/tibetan/          @ngawangtrinley
