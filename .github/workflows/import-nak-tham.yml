@@ -47,14 +47,14 @@ jobs:
       - name: Convert
         run: |
           files=$(find hf-src -type f \( -name '*.parquet' -o -name '*.csv' -o -name '*.jsonl' \) | grep -v "/.cache/" | sort)
-          python3 scripts/import_nak_tham.py --revision "${{ steps.dl.outputs.sha }}" $files | tee import-summary.json
+          python3 scripts/import_nak_tham.py --revision "${{ steps.dl.outputs.sha }}" $files > import-summary.json
+          cat import-summary.json
           python3 - <<'PY'
           import json, datetime
-          p = "tracks/index.json"; s = json.load(open(p, encoding="utf-8"))
-          for t in s["tracks"]:
-              if t["id"] == "nak-tham":
-                  t["status"] = "active"
-          open(p, "w", encoding="utf-8").write(json.dumps(s, ensure_ascii=False, indent=2) + "\n")
+          p = "tracks/index.json"; s = open(p, encoding="utf-8").read()
+          old = '{"id": "nak-tham", "status": "planned"'
+          assert old in s, "nak-tham entry not found"
+          open(p, "w", encoding="utf-8").write(s.replace(old, '{"id": "nak-tham", "status": "active"'))
           p = "tracks/nak-tham/track.json"; t = json.load(open(p, encoding="utf-8"))
           t["source"]["revision"] = "${{ steps.dl.outputs.sha }}"
           t["source"]["imported_on"] = datetime.date.today().isoformat()
