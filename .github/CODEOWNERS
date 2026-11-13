@@ -13,3 +13,9 @@
 # Tradition tracks. Replace with the tradition's team (e.g. @BuddhistAI/theravada) once it exists.
 /tracks/theravada/        @ngawangtrinley
 /tracks/tibetan/          @ngawangtrinley
+
+# Text tracks.
+/tracks/37-practices/     @ngawangtrinley
+
+# Intervention studies.
+/studies/                 @ngawangtrinley

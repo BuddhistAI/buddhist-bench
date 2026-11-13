@@ -8,6 +8,20 @@ Every release of BuddhistBench. Versions follow semver:
 
 For each release, list track versions and changed item IDs, so anyone can see why a score moved.
 
+## [0.2.0] - 2026-11-13
+
+Text tracks, the OpenRouter runner and intervention studies ([design](./docs/intervention-study.md)). No real data yet.
+
+- Text tracks (`"kind": "text"`): new track `37-practices` (*The Thirty-Seven Practices of Bodhisattvas*) with `commentaries.json` and format examples `example-37-practices-en-0001`..`0004`. Commentary answers in the examples are marked placeholders.
+- Item schema: optional `passage`, `commentaries` (item and position). Existing items are unchanged.
+- Scorer 0.2.0: adds `by_commentary` and search stats to reports. No item score changes, so 0.1.0 results stay comparable.
+- Answer prompt 0.2.0: adds the `sourced` variant and search-mode notes; `plain` prompts unchanged.
+- `scripts/openrouter_run.py`: runs items on OpenRouter models in `closed-book`, `native-search`, `logged-search` and `forced-search` modes, logs search behaviour (`schema/call.schema.json`), writes run folders ([results.md](./docs/results.md)).
+- Intervention studies: `studies/`, `schema/study.schema.json`, `schema/intervention.schema.json`, `scripts/check_interventions.py`, `scripts/analyze_study.py`, example study `example-37-practices`, daily workflow `.github/workflows/daily.yml`.
+- `scripts/check.py` validates text tracks, commentaries and studies.
+
+Track versions: core 0.1.0, theravada 0.1.0, tibetan 0.1.0, 37-practices 0.1.0 (new).
+
 ## [0.1.0] - 2026-11-13
 
 First scaffold. No real data yet.

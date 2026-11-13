@@ -6,10 +6,13 @@ BuddhistBench has two parts:
 
 - **Core track**: questions shared by every tradition. Pan-Buddhist facts, plus questions that test whether a model attributes views to the right tradition and avoids presenting one school as "Buddhism".
 - **Tradition tracks**: each tradition writes, reviews and owns questions about itself, in its own languages (Theravāda, Tibetan, Chan/Zen, Pure Land, Tendai, Shingon, Nichiren and more).
+- **Text tracks**: questions on one work, such as *The Thirty-Seven Practices of Bodhisattvas*, answered from its commentaries and keyed to commentary and tradition.
+
+Models are run through OpenRouter in several modes (closed-book, the provider's own web search, and a search tool whose every query we log), and **intervention studies** measure whether accurate, sourced material published about a text reaches AI answers, how fast, and through which models. Design: [docs/intervention-study.md](./docs/intervention-study.md).
 
 It is maintained in the open by Buddhist organizations working together. Founded by WeBuddhist.
 
-> **Status: 0.1.0, scaffold.** The structure, schema, scorer and rules are in place. The only items so far are clearly marked format examples (`example.jsonl`); there is no real data yet. See [CONTRIBUTING.md](./CONTRIBUTING.md) to help write it.
+> **Status: 0.2.0, scaffold.** The structure, schema, scorer and rules are in place. The only items so far are clearly marked format examples (`example.jsonl`); there is no real data yet. See [CONTRIBUTING.md](./CONTRIBUTING.md) to help write it.
 
 ## The key rule
 
@@ -30,13 +33,19 @@ schema/                          item, response and grade JSON schemas
 tracks/index.json                every track (active or planned)
 tracks/<track>/
   TRACK.md                       scope, sources, owners
+  commentaries.json              text tracks: commentaries answers are keyed to
   track.json                     track version and owners
   data/<lang>/example.jsonl      format examples (never on a leaderboard)
   data/<lang>/dev.jsonl          public items
   results/<lang>/LEADERBOARD.md  ranked runs
+  results/<lang>/runs/<run-id>/  one model x mode x variant run (docs/results.md)
+studies/<study>/                 intervention studies: design, intervention log, daily runs, report
 prompts/                         standard answer prompt and judge prompt
 scripts/check.py                 validate everything
 scripts/score.py                 score responses
+scripts/openrouter_run.py        run items on OpenRouter models in each search mode
+scripts/check_interventions.py   daily liveness check of published interventions
+scripts/analyze_study.py         time series and effects for a study
 scripts/export_hf.py             build the Hugging Face release
 docs/                            design, schema, scoring, review process
 ```
@@ -60,6 +69,15 @@ Details in [docs/schema.md](./docs/schema.md) and [docs/scoring.md](./docs/scori
 ```bash
 python3 scripts/score.py --items tracks/core/data/en/dev.jsonl \
   --responses my-run/responses.jsonl --grades my-run/grades.jsonl > scores.json
+```
+
+Or let the runner ask the models, extract answers and score them:
+
+```bash
+OPENROUTER_API_KEY=... python3 scripts/openrouter_run.py --items tracks/core/data/en/dev.jsonl \
+  --models openai/gpt-5 anthropic/claude-sonnet-4.5 --modes closed-book native-search \
+  --out tracks/core/results/en/runs
+python3 scripts/openrouter_run.py --study studies/example-37-practices --dry-run --out /tmp/run   # no key needed
 ```
 
 Use the prompt in [prompts/answer.md](./prompts/answer.md). Short and open answers that do not match automatically need grades from human experts or a judge panel ([prompts/judge.md](./prompts/judge.md)). Then add a row to the track's leaderboard.

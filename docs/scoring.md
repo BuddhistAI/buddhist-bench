@@ -1,6 +1,6 @@
 # Scoring
 
-`scripts/score.py` (scorer version in the file) turns responses and grades into a report.
+`scripts/score.py` (scorer version in the file; 0.2.0 added `by_commentary` and `search` without changing any item score) turns responses and grades into a report.
 
 ## Per item
 
@@ -19,9 +19,11 @@
 
 - `overall`: mean score with counts of correct, incorrect, not attempted.
 - `by_tradition`: every tradition tag, rolled up to its ancestors (an item on `tibetan.sakya` also counts for `tibetan`).
+- `by_commentary`: text tracks, per commentary the item names.
 - `by_type`, `by_format`.
 - `consensus_subset`: items whose positions are all `consensus`.
 - `default_probe`: how often the model picked each tradition's answer. Not part of the score.
+- `search` (when responses carry a search record): share of answers that searched (where the mode can tell) and that cited URLs, and the most cited domains.
 
 ## Grades
 

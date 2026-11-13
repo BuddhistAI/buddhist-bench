@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/BuddhistAI/buddhist-bench/schema/call.schema.json",
+  "title": "BuddhistBench model call",
+  "description": "One question sent to one model in one mode, written by scripts/openrouter_run.py to calls.jsonl. Everything needed to audit the answer and its search behaviour.",
+  "type": "object",
+  "required": ["run_id", "item_id", "repeat", "timestamp", "model", "mode", "variant", "prompt_version", "search"],
+  "properties": {
+    "run_id": {"type": "string"},
+    "study": {"type": ["string", "null"], "description": "Study ID for daily study runs, null for one-off runs."},
+    "item_id": {"type": "string"},
+    "repeat": {"type": "integer", "minimum": 0},
+    "timestamp": {"type": "string", "description": "UTC, ISO 8601, when the request was sent."},
+    "model": {"type": "string", "description": "OpenRouter model ID requested."},
+    "served_model": {"type": ["string", "null"], "description": "Model ID in the response (may differ from the request)."},
+    "provider": {"type": ["string", "null"], "description": "Provider that served the request, as OpenRouter reports it."},
+    "mode": {"enum": ["closed-book", "native-search", "logged-search", "forced-search"]},
+    "variant": {"enum": ["plain", "sourced"], "description": "plain = standard prompt; sourced = the prompt also asks for reliable sources."},
+    "prompt_version": {"type": "string"},
+    "params": {"type": "object", "description": "Sampling and tool parameters sent (temperature if set, engine, max_results)."},
+    "answer": {"type": ["string", "null"], "description": "Extracted answer (choice id, short answer, or open answer)."},
+    "declined": {"type": "boolean"},
+    "raw": {"type": ["string", "null"], "description": "Full final message text."},
+    "search": {
+      "type": "object",
+      "required": ["triggered"],
+      "properties": {
+        "triggered": {"type": ["boolean", "null"], "description": "Did the model search? null when the mode cannot tell."},
+        "requests": {"type": ["integer", "null"], "description": "Number of searches run."},
+        "queries": {"type": "array", "items": {"type": "string"}, "description": "Queries the model wrote (logged-search only)."},
+        "results": {"type": "array", "items": {"type": "object", "properties": {"query_index": {"type": "integer"}, "rank": {"type": "integer"}, "url": {"type": "string"}, "title": {"type": "string"}}}, "description": "Every result shown to the model (logged-search only)."},
+        "fetched_urls": {"type": "array", "items": {"type": "string"}, "description": "Pages the model opened with fetch_url (logged-search only)."},
+        "cited_urls": {"type": "array", "items": {"type": "string"}, "description": "URLs cited: url_citation annotations plus URLs written in the answer."},
+        "observability": {"enum": ["none", "counts-and-citations", "full", "citations"], "description": "What this mode lets us see."}
+      }
+    },
+    "interventions": {
+      "type": "object",
+      "description": "Matches against the study's intervention log (filled when a study is given).",
+      "properties": {
+        "seen": {"type": "array", "items": {"type": "string"}, "description": "Intervention IDs whose URL appeared in search results."},
+        "fetched": {"type": "array", "items": {"type": "string"}},
+        "cited": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "outcome": {"enum": ["correct", "incorrect", "not_attempted", "ungraded"]},
+    "score": {"type": "number"},
+    "matched": {"type": "array", "items": {"type": "string"}, "description": "Traditions or commentaries whose position the answer matched."},
+    "usage": {"type": "object", "description": "Token counts, cost in USD, server-tool counters, as returned."},
+    "latency_ms": {"type": "integer"},
+    "error": {"type": ["string", "null"]}
+  }
+}

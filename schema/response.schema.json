@@ -7,6 +7,7 @@
   "properties": {
     "id": {"type": "string"},
     "answer": {"type": "string", "description": "Choice id (mcq) or answer text (short, open)."},
-    "declined": {"type": "boolean", "description": "The model declined to answer or rejected the premise."}
+    "declined": {"type": "boolean", "description": "The model declined to answer or rejected the premise."},
+    "search": {"type": "object", "description": "Optional search record (see schema/call.schema.json, property 'search'). Adds search stats to the score report."}
   }
 }

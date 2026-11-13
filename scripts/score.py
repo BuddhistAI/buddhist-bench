@@ -11,7 +11,9 @@ Grades:    optional, for short/open items that need a human or judge panel
 
 Every item ends up as correct, incorrect, not_attempted or ungraded, plus a
 0-1 score. Results are reported overall, per tradition (rolled up the tree),
-per type, and for the consensus subset. default-probe items are not scored
+per commentary (text tracks), per type, and for the consensus subset. When
+responses carry a 'search' object (written by scripts/openrouter_run.py), the
+report adds search stats. default-probe items are not scored
 for accuracy; they are reported as a distribution over traditions.
 """
 import argparse
@@ -20,7 +22,7 @@ import sys
 import unicodedata
 from collections import defaultdict
 
-SCORER_VERSION = "0.1.0"
+SCORER_VERSION = "0.2.0"  # 0.2.0: adds by_commentary and search stats; per-item scores unchanged
 
 
 def load_jsonl(path):
@@ -68,14 +70,14 @@ def grade_item(item, resp, grade):
     if fmt == "mcq":
         for p in item["positions"]:
             if str(answer).strip().upper() == p["answer"].upper():
-                return "correct", 1.0, p["traditions"]
+                return "correct", 1.0, p["traditions"] + p.get("commentaries", [])
         return "incorrect", 0.0, []
 
     if fmt == "short":
         a = norm(answer)
         for p in item["positions"]:
             if a in {norm(x) for x in [p["answer"], *p.get("aliases", [])]}:
-                return "correct", 1.0, p["traditions"]
+                return "correct", 1.0, p["traditions"] + p.get("commentaries", [])
         if grade and grade.get("grade"):
             g = grade["grade"]
             t = [grade["matched_tradition"]] if grade.get("matched_tradition") else []
@@ -87,6 +89,76 @@ def grade_item(item, resp, grade):
         s = rubric_score(item.get("rubric", []), grade["criteria"])
         return ("correct" if s >= 0.5 else "incorrect"), s, []
     return "ungraded", 0.0, []
+
+
+def build_report(items, resps, grades=None):
+    """Score active items. items: list of item dicts; resps, grades: id -> dict."""
+    grades = grades or {}
+    per_item = []
+    buckets = defaultdict(lambda: defaultdict(list))  # group -> key -> [score]
+    outcomes = defaultdict(lambda: defaultdict(int))
+    probe = defaultdict(lambda: defaultdict(int))  # "all" -> tradition -> count
+
+    for it in items:
+        resp = resps.get(it["id"])
+        outcome, score, matched = grade_item(it, resp, grades.get(it["id"]))
+        row = {"id": it["id"], "outcome": outcome, "score": round(score, 4), "matched": matched}
+        per_item.append(row)
+        if it["type"] == "default-probe":
+            for t in matched or ["none"]:
+                probe["all"][t] += 1
+            continue
+        keys = [("overall", "all"), ("type", it["type"]), ("format", it["format"])]
+        if all(p.get("consensus") for p in it["positions"]):
+            keys.append(("subset", "consensus"))
+        for t in {a for t in it["traditions"] for a in ancestors(t)}:
+            keys.append(("tradition", t))
+        for c in it.get("commentaries", []):
+            keys.append(("commentary", c))
+        for group, key in keys:
+            buckets[group][key].append(score)
+            outcomes[f"{group}:{key}"][outcome] += 1
+
+    def summary(group):
+        return {
+            k: {"n": len(v), "score": round(sum(v) / len(v), 4), **outcomes[f"{group}:{k}"]}
+            for k, v in sorted(buckets[group].items())
+        }
+
+    report = {
+        "scorer_version": SCORER_VERSION,
+        "items": len(items),
+        "ungraded": sum(1 for p in per_item if p["outcome"] == "ungraded"),
+        "overall": summary("overall").get("all", {}),
+        "by_tradition": summary("tradition"),
+        "by_commentary": summary("commentary"),
+        "by_type": summary("type"),
+        "by_format": summary("format"),
+        "consensus_subset": summary("subset").get("consensus", {}),
+        "default_probe": {k: dict(v) for k, v in probe.items()},
+    }
+    searched = [r["search"] for r in resps.values() if isinstance(r.get("search"), dict)]
+    if searched:
+        known = [s for s in searched if s.get("triggered") is not None]
+        report["search"] = {
+            "responses": len(searched),
+            "search_known": len(known),
+            "search_rate": round(sum(1 for s in known if s["triggered"]) / len(known), 4) if known else None,
+            "citing_rate": round(sum(1 for s in searched if s.get("cited_urls")) / len(searched), 4),
+            "cited_domains": dict(sorted(_domains(u for s in searched for u in s.get("cited_urls", [])).items(),
+                                         key=lambda kv: -kv[1])[:25]),
+        }
+    report["per_item"] = per_item
+    return report
+
+
+def _domains(urls):
+    from urllib.parse import urlsplit
+    out = defaultdict(int)
+    for u in urls:
+        host = urlsplit(u).hostname or ""
+        out[host[4:] if host.startswith("www.") else host] += 1
+    return out
 
 
 def main():
@@ -104,47 +176,7 @@ def main():
         items = [i for i in items if not i.get("example")]
     resps = {r["id"]: r for r in load_jsonl(args.responses)}
     grades = {g["id"]: g for g in load_jsonl(args.grades)} if args.grades else {}
-
-    per_item = []
-    buckets = defaultdict(lambda: defaultdict(list))  # group -> key -> [score]
-    outcomes = defaultdict(lambda: defaultdict(int))
-    probe = defaultdict(lambda: defaultdict(int))  # item id -> tradition -> count
-
-    for it in items:
-        outcome, score, matched = grade_item(it, resps.get(it["id"]), grades.get(it["id"]))
-        per_item.append({"id": it["id"], "outcome": outcome, "score": round(score, 4), "matched": matched})
-        if it["type"] == "default-probe":
-            for t in matched or ["none"]:
-                probe["all"][t] += 1
-            continue
-        keys = [("overall", "all"), ("type", it["type"]), ("format", it["format"])]
-        if all(p.get("consensus") for p in it["positions"]):
-            keys.append(("subset", "consensus"))
-        for t in {a for t in it["traditions"] for a in ancestors(t)}:
-            keys.append(("tradition", t))
-        for group, key in keys:
-            buckets[group][key].append(score)
-            outcomes[f"{group}:{key}"][outcome] += 1
-
-    def summary(group):
-        return {
-            k: {"n": len(v), "score": round(sum(v) / len(v), 4), **outcomes[f"{group}:{k}"]}
-            for k, v in sorted(buckets[group].items())
-        }
-
-    report = {
-        "scorer_version": SCORER_VERSION,
-        "items": len(items),
-        "ungraded": sum(1 for p in per_item if p["outcome"] == "ungraded"),
-        "overall": summary("overall").get("all", {}),
-        "by_tradition": summary("tradition"),
-        "by_type": summary("type"),
-        "by_format": summary("format"),
-        "consensus_subset": summary("subset").get("consensus", {}),
-        "default_probe": {k: dict(v) for k, v in probe.items()},
-        "per_item": per_item,
-    }
-    json.dump(report, sys.stdout, ensure_ascii=False, indent=2)
+    json.dump(build_report(items, resps, grades), sys.stdout, ensure_ascii=False, indent=2)
     print()
 
 

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/BuddhistAI/buddhist-bench/schema/study.schema.json",
+  "title": "BuddhistBench intervention study",
+  "description": "studies/<study>/study.json. Fixed before the first intervention; later changes are listed in 'amendments'.",
+  "type": "object",
+  "required": ["id", "status", "track", "language", "split", "control_items", "planned_targets", "panel", "baseline", "analysis", "owners"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "title": {"type": "string"},
+    "example": {"type": "boolean"},
+    "status": {"enum": ["example", "planned", "baseline", "running", "ended"], "description": "Daily runs happen in baseline and running."},
+    "track": {"type": "string"},
+    "language": {"type": "string"},
+    "split": {"enum": ["example", "dev", "test"]},
+    "items": {"oneOf": [{"const": "all"}, {"type": "array", "items": {"type": "string"}}]},
+    "control_items": {"type": "array", "items": {"type": "string"}, "description": "Never targeted by any intervention."},
+    "planned_targets": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}, "description": "Planned intervention label -> item IDs, drawn at random before the baseline."},
+    "panel": {
+      "type": "object",
+      "required": ["models", "modes", "variants", "repeats"],
+      "properties": {
+        "models": {"type": "array", "items": {"type": "string"}},
+        "modes": {"type": "array", "items": {"enum": ["closed-book", "native-search", "logged-search", "forced-search"]}},
+        "variants": {"type": "array", "items": {"enum": ["plain", "sourced"]}},
+        "repeats": {"type": "integer", "minimum": 1},
+        "search_backend": {"type": "string"},
+        "temperature": {"type": ["number", "null"], "description": "null = provider default."}
+      }
+    },
+    "baseline": {"type": "object", "required": ["start", "min_days"], "properties": {"start": {"type": "string"}, "min_days": {"type": "integer"}}},
+    "analysis": {
+      "type": "object",
+      "properties": {
+        "impact_window_days": {"type": "integer"},
+        "impact_threshold_sd": {"type": "number"},
+        "bootstrap": {"type": "integer"},
+        "seed": {"type": "integer"}
+      }
+    },
+    "budget_usd_per_day": {"type": "number"},
+    "owners": {"type": "array", "items": {"type": "string"}},
+    "amendments": {"type": "array", "items": {"type": "object", "properties": {"date": {"type": "string"}, "change": {"type": "string"}}}},
+    "notes": {"type": "string"}
+  }
+}

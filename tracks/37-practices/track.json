@@ -1,0 +1,15 @@
+{
+  "id": "37-practices",
+  "kind": "text",
+  "version": "0.1.0",
+  "owners": ["@ngawangtrinley"],
+  "languages": ["en"],
+  "text": {
+    "title": "The Thirty-Seven Practices of Bodhisattvas",
+    "original_title": "rgyal sras lag len so bdun ma",
+    "author": "Gyalsé Tokmé Zangpo (rGyal sras Thogs med bzang po)",
+    "identifiers": {},
+    "note": "Add BDRC and Tōhoku/Derge identifiers once a reviewer has confirmed them."
+  },
+  "note": "Example track: example items only. Owner is a placeholder until reviewers join."
+}

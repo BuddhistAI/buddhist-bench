@@ -60,3 +60,7 @@ BudHistBenchmark reached 95% within a year of multiple-choice questions, and mod
 ## Languages
 
 Each language is its own data set, written or reviewed by native experts, not machine-translated (TLUE shows translated benchmarks lose cultural content). `translation_of` links an item to its source item when one is adapted from another language.
+
+## Text tracks and intervention studies
+
+Q&A on single texts keyed to commentaries, the OpenRouter runner with its search modes, and studies of how published material reaches AI answers are designed in [intervention-study.md](./intervention-study.md).

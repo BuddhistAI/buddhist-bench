@@ -26,4 +26,10 @@ jobs:
                       f.write(json.dumps({"id": it["id"], "answer": ans}) + "\n")
           PY
           python3 scripts/score.py --include-examples --items tracks/*/data/*/example.jsonl --responses /tmp/resp.jsonl > /tmp/scores.json
+      - name: Runner and analysis dry run on the example study
+        run: |
+          cp -r studies/example-37-practices /tmp/example-study
+          python3 scripts/openrouter_run.py --study /tmp/example-study --dry-run
+          python3 scripts/analyze_study.py /tmp/example-study
+          python3 scripts/check_interventions.py /tmp/example-study --dry-run
       - run: python3 scripts/export_hf.py --out build/hf

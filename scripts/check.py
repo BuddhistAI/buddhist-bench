@@ -18,7 +18,13 @@ SPLITS = {"example", "dev"}  # the test split is private and never committed
 REQUIRED = ["id", "track", "language", "type", "format", "traditions", "topics", "question",
             "positions", "status", "since", "changed", "authors", "reviewers", "sources_license"]
 ALLOWED = set(REQUIRED) | {"translation_of", "difficulty", "choices", "rubric", "accept_decline",
-                           "dispute", "example", "notes"}
+                           "dispute", "example", "notes", "passage", "commentaries"}
+STUDY_STATUSES = {"example", "planned", "baseline", "running", "ended"}
+MODES = {"closed-book", "native-search", "logged-search", "forced-search"}
+IV_REQUIRED = ["id", "study", "published_at", "venue_type", "venue", "language", "url", "content_summary",
+               "target_items", "sources_cited", "disclosure", "author", "status"]
+VENUES = {"own-site", "partner-site", "wikipedia", "wikidata", "wikisource", "forum", "social", "video", "other"}
+IV_STATUSES = {"planned", "live", "edited", "reverted", "removed"}
 
 errors = []
 
@@ -72,6 +78,20 @@ for tr in tracks:
         meta = json.loads((tdir / "track.json").read_text(encoding="utf-8"))
         if not SEMVER.match(meta.get("version", "")):
             err(f"tracks/{tid}/track.json: version must be semver")
+    commentaries = set()
+    if tr.get("kind", "tradition") not in ("tradition", "text"):
+        err(f"tracks/index.json: {tid} kind must be tradition or text")
+    if tr.get("kind") == "text":
+        cpath = tdir / "commentaries.json"
+        if not cpath.exists():
+            err(f"tracks/{tid}: text tracks need commentaries.json")
+        else:
+            for c in json.loads(cpath.read_text(encoding="utf-8"))["commentaries"]:
+                if c["id"] in commentaries:
+                    err(f"tracks/{tid}/commentaries.json: duplicate id {c['id']}")
+                commentaries.add(c["id"])
+                if c.get("tradition") not in traditions:
+                    err(f"tracks/{tid}/commentaries.json: {c['id']} has unknown tradition '{c.get('tradition')}'")
     files = sorted((tdir / "data").glob("*/*.jsonl"))
     if not files:
         err(f"tracks/{tid}: active track has no data files")
@@ -131,6 +151,10 @@ for tr in tracks:
             for t in it.get("topics", []):
                 if t not in topics:
                     err(f"{where}: unknown topic '{t}'")
+            used = list(it.get("commentaries", [])) + [c for p in it.get("positions", []) for c in p.get("commentaries", [])]
+            for c in used:
+                if c not in commentaries:
+                    err(f"{where}: unknown commentary '{c}' (add it to tracks/{tid}/commentaries.json)")
             if not it.get("positions"):
                 err(f"{where}: needs at least one position")
             fmt = it.get("format")
@@ -154,7 +178,72 @@ for tr in tracks:
                 if roles != {"same-tradition", "cross-tradition"}:
                     err(f"{where}: active dev items need a same-tradition and a cross-tradition reviewer")
 
+# ------------------------------------------------------------ intervention studies
+track_by_id = {t["id"]: t for t in tracks}
+n_studies = 0
+for spath in sorted((ROOT / "studies").glob("*/study.json")):
+    n_studies += 1
+    rel = spath.relative_to(ROOT)
+    st = json.loads(spath.read_text(encoding="utf-8"))
+    for k in ["id", "status", "track", "language", "split", "control_items", "planned_targets", "panel", "baseline",
+              "analysis", "owners"]:
+        if k not in st:
+            err(f"{rel}: missing '{k}'")
+    if st.get("id") != spath.parent.name:
+        err(f"{rel}: id must match the folder name")
+    if st.get("status") not in STUDY_STATUSES:
+        err(f"{rel}: bad status")
+    if (st.get("status") == "example") != bool(st.get("example")):
+        err(f"{rel}: example studies (and only those) have status example and example: true")
+    if st.get("track") not in track_by_id:
+        err(f"{rel}: unknown track '{st.get('track')}'")
+    for m in st.get("panel", {}).get("modes", []):
+        if m not in MODES:
+            err(f"{rel}: unknown mode '{m}'")
+    known_items = {i for i, w in seen_ids.items()
+                   if w.startswith(f"tracks/{st.get('track')}/data/{st.get('language')}/{st.get('split')}.jsonl")}
+    check_items = st.get("split") != "test"  # test items are private
+    control = set(st.get("control_items", []))
+    planned = {i for v in st.get("planned_targets", {}).values() for i in v}
+    for i in control | planned:
+        if check_items and i not in known_items:
+            err(f"{rel}: item {i} is not in the study's track/language/split")
+    if control & planned:
+        err(f"{rel}: control items cannot be planned targets: {sorted(control & planned)}")
+    ivp = spath.parent / "interventions.jsonl"
+    iv_ids = set()
+    for n, line in enumerate(ivp.read_text(encoding="utf-8").splitlines() if ivp.exists() else [], 1):
+        if not line.strip():
+            continue
+        where = f"{ivp.relative_to(ROOT)}:{n}"
+        iv = json.loads(line)
+        for k in IV_REQUIRED:
+            if k not in iv:
+                err(f"{where}: missing '{k}'")
+        if not re.match(r"^int-[0-9]{4,}$", str(iv.get("id", ""))):
+            err(f"{where}: id must look like int-0001")
+        if iv.get("id") in iv_ids:
+            err(f"{where}: duplicate id")
+        iv_ids.add(iv.get("id"))
+        if iv.get("study") != st.get("id"):
+            err(f"{where}: study must be '{st.get('id')}'")
+        if bool(iv.get("example")) != bool(st.get("example")):
+            err(f"{where}: example flag must match the study")
+        if iv.get("venue_type") not in VENUES:
+            err(f"{where}: bad venue_type")
+        if iv.get("status") not in IV_STATUSES:
+            err(f"{where}: bad status")
+        if iv.get("language") not in languages:
+            err(f"{where}: unknown language '{iv.get('language')}'")
+        if "coi_disclosed" not in iv.get("disclosure", {}):
+            err(f"{where}: disclosure needs coi_disclosed")
+        for i in iv.get("target_items", []):
+            if i in control:
+                err(f"{where}: targets control item {i}")
+            if check_items and i not in known_items:
+                err(f"{where}: target {i} is not in the study's items")
+
 for e in errors:
     print("ERROR", e)
-print(f"{len(seen_ids)} items checked, {len(errors)} errors")
+print(f"{len(seen_ids)} items, {n_studies} studies checked, {len(errors)} errors")
 sys.exit(1 if errors else 0)

@@ -1,0 +1,29 @@
+{
+  "id": "example-37-practices",
+  "title": "Example: do sourced publications about The Thirty-Seven Practices reach AI answers?",
+  "example": true,
+  "status": "example",
+  "track": "37-practices",
+  "language": "en",
+  "split": "example",
+  "items": "all",
+  "control_items": ["example-37-practices-en-0001", "example-37-practices-en-0004"],
+  "planned_targets": {
+    "A": ["example-37-practices-en-0002"],
+    "B": ["example-37-practices-en-0003"]
+  },
+  "panel": {
+    "models": ["openai/gpt-5", "anthropic/claude-sonnet-4.5", "google/gemini-2.5-pro", "x-ai/grok-4", "perplexity/sonar-pro", "deepseek/deepseek-chat", "meta-llama/llama-4-maverick", "qwen/qwen3-235b-a22b", "mistralai/mistral-large"],
+    "modes": ["closed-book", "native-search", "logged-search"],
+    "variants": ["plain", "sourced"],
+    "repeats": 3,
+    "search_backend": "brave",
+    "temperature": null
+  },
+  "baseline": {"start": "2026-11-20", "min_days": 7},
+  "analysis": {"impact_window_days": 3, "impact_threshold_sd": 2, "bootstrap": 1000, "seed": 1},
+  "budget_usd_per_day": 5,
+  "owners": ["@ngawangtrinley"],
+  "amendments": [],
+  "notes": "Format example. The model IDs are placeholders: check them against OpenRouter's model list before a real study. A real study needs at least 20 items per group; this one shows the shape only."
+}

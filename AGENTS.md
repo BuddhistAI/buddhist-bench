@@ -6,3 +6,5 @@
 - Never commit test data (`test.jsonl` is private).
 - Any change to items or the scorer needs a version bump (`VERSION`, the track's `track.json`) and a CHANGELOG entry: patch = gold fixes, minor = new items/tracks/languages, major = format/scorer/judge changes.
 - Run `python3 scripts/check.py` before pushing.
+- Text tracks (`kind: text`) key answers to commentaries in the track's `commentaries.json`. Intervention studies live in `studies/` (design: `docs/intervention-study.md`); never edit past runs, and log interventions the day they go live.
+- Never publish an intervention that is not accurate, sourced and reviewed; follow Wikipedia policies (COI disclosure, reliable sources). Never commit API keys: the runner reads `OPENROUTER_API_KEY` and `BRAVE_API_KEY` from the environment.

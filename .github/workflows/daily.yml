@@ -1,0 +1,67 @@
+name: daily study runs
+
+# Runs every study whose study.json status is "baseline" or "running":
+# liveness checks, the model panel, then the analysis; commits the results to main.
+# Needs the repository secret OPENROUTER_API_KEY (and BRAVE_API_KEY for logged-search).
+# Without OPENROUTER_API_KEY it does nothing.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      study:
+        description: "Run only this study ID (default: all active studies)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-study-runs
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Find active studies
+        id: studies
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, glob, os
+          only = os.environ.get("ONLY") or None
+          ids = []
+          for p in sorted(glob.glob("studies/*/study.json")):
+              s = json.load(open(p))
+              if s["status"] in ("baseline", "running") and not s.get("example") and (only in (None, s["id"])):
+                  ids.append(s["id"])
+          print("ids=" + " ".join(ids))
+          PY
+        env:
+          ONLY: ${{ github.event.inputs.study }}
+      - name: Run
+        if: env.OPENROUTER_API_KEY != '' && steps.studies.outputs.ids != ''
+        run: |
+          for id in ${{ steps.studies.outputs.ids }}; do
+            python3 scripts/check_interventions.py "studies/$id"
+            python3 scripts/openrouter_run.py --study "studies/$id"
+            python3 scripts/analyze_study.py "studies/$id"
+          done
+      - name: Commit
+        if: env.OPENROUTER_API_KEY != '' && steps.studies.outputs.ids != ''
+        run: |
+          git config user.name "buddhistbench-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add studies
+          git diff --cached --quiet && exit 0
+          git commit -m "Daily study runs $(date -u +%F)"
+          for i in 1 2 3 4; do git pull --rebase && git push && break; sleep $((i*10)); done

@@ -49,7 +49,7 @@ Open a "Dispute an answer" issue with the item ID, what you think is wrong, and 
 
 1. Use `prompts/answer.md` exactly, at temperature 0 where possible.
 2. Score with `scripts/score.py`. Grade short/open items that do not match automatically with human experts or a judge panel of at least three models from different vendors (`prompts/judge.md`); record exact model versions.
-3. Add a row to `tracks/<track>/results/<lang>/LEADERBOARD.md` and put responses, grades and `scores.json` in `tracks/<track>/results/<lang>/runs/<date>-<model>/`, so anyone can re-score them.
+3. Add a row to `tracks/<track>/results/<lang>/LEADERBOARD.md` and put the run folder (`run.json`, `responses.jsonl`, grades, `scores.json`; format in [docs/results.md](./docs/results.md)) in `tracks/<track>/results/<lang>/runs/<run-id>/`, so anyone can re-score it. `scripts/openrouter_run.py` writes these folders for you; record the mode (closed-book, native-search, logged-search) in the row.
 
 ## Releasing (maintainers)
 

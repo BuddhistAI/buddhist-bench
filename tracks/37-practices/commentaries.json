@@ -1,0 +1,7 @@
+{
+  "_comment": "Commentaries that answers in this track can be keyed to. 'verified' turns true once a reviewer has checked the bibliographic details against the book. IDs are permanent.",
+  "commentaries": [
+    {"id": "dilgo-khyentse-heart-of-compassion", "commentator": "Dilgo Khyentse Rinpoche", "title": "The Heart of Compassion: The Thirty-seven Verses on the Practice of a Bodhisattva", "tradition": "tibetan.nyingma", "language": "en", "edition": "Shambhala (English translation by the Padmakara Translation Group)", "verified": false},
+    {"id": "sonam-rinchen-37-practices", "commentator": "Geshe Sonam Rinchen", "title": "The Thirty-Seven Practices of Bodhisattvas: An Oral Teaching", "tradition": "tibetan.gelug", "language": "en", "edition": "Snow Lion (translated by Ruth Sonam)", "verified": false}
+  ]
+}

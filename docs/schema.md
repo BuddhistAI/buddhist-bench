@@ -24,6 +24,8 @@ One JSON object per line in `tracks/<track>/data/<lang>/<split>.jsonl`. Machine-
 | `sources_license` | yes | Origin and license, e.g. `original, MIT`. |
 | `translation_of` | no | ID of the item this adapts from another language. |
 | `notes` | no | Anything reviewers should know. |
+| `passage` | text tracks | Verses or sections the question is about, e.g. `["v12"]`. |
+| `commentaries` | text tracks | Commentary IDs (the track's `commentaries.json`) that the question names. Positions may also carry `commentaries`: the commentaries that give that answer. |
 
 ## How each type uses positions
 
@@ -32,3 +34,13 @@ One JSON object per line in `tracks/<track>/data/<lang>/<split>.jsonl`. Machine-
 - **comparative / contested**: one position per tradition, plus a rubric.
 - **default-probe**: mcq, one position per tradition, each pointing at a different choice.
 - **false-premise**: one position explaining the false premise, `accept_decline: true`, and a rubric.
+
+## Text tracks
+
+A text track (`"kind": "text"` in `tracks/index.json`) is about one work. Its `commentaries.json` lists the commentaries answers can be keyed to, each with a tradition. A question that names a commentary is `attributed` and keyed to that commentary's position; a question about a verse that commentaries read differently is `contested`, with one position per commentary. Every position cites the commentary and page in `sources`. See [intervention-study.md](./intervention-study.md).
+
+## Other schemas
+
+- `schema/call.schema.json`: one model call written by the OpenRouter runner.
+- `schema/study.schema.json` and `schema/intervention.schema.json`: intervention studies and their log.
+- Run folders: [results.md](./results.md).
