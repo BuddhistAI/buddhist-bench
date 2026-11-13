@@ -1,0 +1,56 @@
+name: hf-sync
+
+# Publishes each release from GitHub (the source of truth) to Hugging Face:
+#   VERSION x.y.z on main  ->  git tag vx.y.z  ->  https://huggingface.co/datasets/BuddhistAI/buddhist-bench  tag vx.y.z
+# Only public splits (dev, example) go out; never test, retired items, or exam papers that are
+# pending or held out (scripts/export_hf.py). Imported tracks keep their license and credits in the card.
+# Every run is a dry run first (check.py, export, card check, load with `datasets`). Publishing needs
+# the secret HF_TOKEN (write access to the BuddhistAI org on Hugging Face); without it the job stops
+# after the dry run, green. Idempotent: a release already on Hugging Face is skipped. See docs/huggingface.md.
+on:
+  push:
+    branches: [main]
+    paths: [VERSION]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write  # to create the release tag
+
+concurrency:
+  group: hf-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tag matches VERSION
+        if: startsWith(github.ref, 'refs/tags/')
+        run: test "v$(cat VERSION)" = "${GITHUB_REF_NAME}"
+      - run: python3 scripts/check.py
+      - run: pip install "datasets>=3.0" "huggingface_hub>=0.30"
+      - name: Dry run (export, validate card, load with datasets)
+        run: python3 scripts/export_hf.py --out build/hf --validate
+      - name: Tag the release if it has no tag yet
+        if: github.ref == 'refs/heads/main'
+        run: |
+          tag="v$(cat VERSION)"
+          git fetch --tags --quiet
+          if ! git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$tag" -m "Release $tag" && git push origin "refs/tags/$tag"
+          fi
+      - name: Skip publishing (no HF_TOKEN)
+        if: env.HF_TOKEN == ''
+        run: echo "::notice::HF_TOKEN is not set, so nothing was published. Add it as an org Actions secret (docs/huggingface.md)."
+      - name: Publish to Hugging Face
+        if: env.HF_TOKEN != ''
+        run: python3 scripts/export_hf.py --out build/hf --push

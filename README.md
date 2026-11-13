@@ -56,7 +56,7 @@ scripts/score.py                 score responses
 scripts/openrouter_run.py        run items on OpenRouter models in each search mode
 scripts/check_interventions.py   daily liveness check of published interventions
 scripts/analyze_study.py         time series and effects for a study
-scripts/export_hf.py             build the Hugging Face release
+scripts/export_hf.py             build, check and publish the Hugging Face release
 docs/                            design, schema, scoring, review process
 fixes/<id>/                      model-side fixes (system prompt, reference material, skill)
 ```
@@ -101,7 +101,7 @@ Semantic versioning for the whole benchmark (`VERSION`, git tags `vX.Y.Z`) and f
 - **minor**: add items, traditions, languages or tracks
 - **major**: change the item format, the scorer or the judge panel
 
-Each release is mirrored to Hugging Face at [BuddhistAI/buddhist-bench](https://huggingface.co/datasets/BuddhistAI/buddhist-bench). Leaderboard rows cite the release and track version; never compare rows across versions.
+Each release is published automatically to Hugging Face at [BuddhistAI/buddhist-bench](https://huggingface.co/datasets/BuddhistAI/buddhist-bench), public splits only, tagged `vX.Y.Z` (`load_dataset("BuddhistAI/buddhist-bench", "core-en", revision="vX.Y.Z")`). GitHub stays the source of truth; see [docs/huggingface.md](./docs/huggingface.md). Leaderboard rows cite the release and track version; never compare rows across versions.
 
 ## Related
 

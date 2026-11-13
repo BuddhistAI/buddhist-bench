@@ -59,4 +59,4 @@ Open a "Dispute an answer" issue with the item ID, what you think is wrong, and 
 
 1. Bump `VERSION` and the changed tracks' `track.json` (patch / minor / major, see README).
 2. Add the CHANGELOG entry with changed item IDs.
-3. Run `python3 scripts/check.py`, merge, then tag `vX.Y.Z`. The release workflow mirrors the public splits to Hugging Face.
+3. Run `python3 scripts/check.py` and merge. The `hf-sync` workflow tags `vX.Y.Z` and publishes the public splits to Hugging Face with the same tag ([docs/huggingface.md](./docs/huggingface.md)). Never edit the Hugging Face copy.
