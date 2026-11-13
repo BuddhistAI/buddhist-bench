@@ -229,8 +229,14 @@ def content_text(msg):
     return c or ""
 
 
-def ask(client, search, item, model, mode, variant, temperature, engine):
-    messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user_prompt(item, variant)}]
+def ask(client, search, item, model, mode, variant, temperature, engine, fix=None):
+    system, user = SYSTEM, user_prompt(item, variant)
+    if fix:
+        if fix.get("system"):
+            system = f"{SYSTEM}\n\n{fix['system']}"
+        if fix.get("context"):
+            user = f"Reference material:\n\n{fix['context']}\n\n---\n\n{user}"
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
     body = {"model": model, "messages": messages, "usage": {"include": True}}
     if temperature is not None:
         body["temperature"] = temperature
@@ -322,6 +328,26 @@ def git_sha():
         return "unknown"
 
 
+def load_fix(path):
+    """Read fixes/<id>/: fix.json plus optional system.md and context.md. Returns (fix, metadata)."""
+    if not path:
+        return None, None
+    d = ROOT / path if not Path(path).is_absolute() else Path(path)
+    meta = json.loads((d / "fix.json").read_text(encoding="utf-8"))
+    fix, h = {}, hashlib.sha256()
+    for key in ("system", "context"):
+        f = d / f"{key}.md"
+        if f.exists():
+            fix[key] = f.read_text(encoding="utf-8").strip()
+            h.update(f.read_bytes())
+    if not fix:
+        sys.exit(f"{d}: a fix needs system.md and/or context.md")
+    return fix, {"id": meta["id"], "kind": meta["kind"], "version": meta.get("version"),
+                 "targets": meta.get("targets", []), "source": meta.get("source"),
+                 "path": str(d.relative_to(ROOT)) if d.is_relative_to(ROOT) else str(d),
+                 "sha256": h.hexdigest()}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--study", help="studies/<id>: take items, panel and interventions from study.json")
@@ -340,6 +366,8 @@ def main():
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-cost", type=float, help="stop starting new calls after this many USD")
     ap.add_argument("--dry-run", action="store_true", help="fake model and search; no network, no key")
+    ap.add_argument("--fix", help="fixes/<id>: model-side fix to apply (system prompt and/or reference material); "
+                    "omit for the baseline")
     args = ap.parse_args()
 
     study, interventions = None, []
@@ -370,6 +398,7 @@ def main():
     args.repeats = args.repeats or 1
     if args.dry_run:
         args.search_backend = "fake"
+    fix, fix_meta = load_fix(args.fix)
     args.search_backend = args.search_backend or "brave"
 
     items = [i for p in args.items for i in load_jsonl(p) if i.get("status") == "active"]
@@ -450,14 +479,14 @@ def main():
         with lock:
             if args.max_cost is not None and spent[0] >= args.max_cost:
                 return
-        run_id = f"{date}-{slug(m)}-{mode}-{v}"
+        run_id = f"{date}-{slug(m)}-{mode}-{v}" + (f"-fix-{fix_meta['id']}" if fix_meta else "")
         rec = {"run_id": run_id, "study": study["id"] if study else None, "item_id": it["id"], "repeat": r,
                "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"), "model": m, "mode": mode,
                "variant": v, "prompt_version": PROMPT_VERSION}
         t0 = time.time()
         try:
             text, s, usage, served, provider, params = ask(client, search, it, m, mode, v, args.temperature,
-                                                           args.engine)
+                                                           args.engine, fix)
             answer, declined = extract(it, text)
             outcome, sc, matched = score.grade_item(it, {"answer": answer, "declined": declined}, None)
             rec.update(served_model=served, provider=provider, params=params, answer=answer, declined=declined,
@@ -515,7 +544,7 @@ def main():
             "temperature": args.temperature, "engine": args.engine if mode == "native-search" else None,
             "search_backend": search.name if (mode == "logged-search" and search) else None,
             "harness": f"BuddhistAI/buddhist-bench@{sha}:scripts/openrouter_run.py (runner {RUNNER_VERSION})",
-            "scorer_version": score.SCORER_VERSION, "judge_panel": None, "study": study["id"] if study else None,
+            "fix": fix_meta, "scorer_version": score.SCORER_VERSION, "judge_panel": None, "study": study["id"] if study else None,
             "date": date, "started_at": now.isoformat(timespec="seconds"),
             "finished_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "calls": len(recs), "cost_usd": round(sum(float((x.get("usage") or {}).get("cost", 0) or 0)

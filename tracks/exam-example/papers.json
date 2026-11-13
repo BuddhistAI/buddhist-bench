@@ -1,0 +1,19 @@
+{
+  "_comment": "One entry per exam paper. permission.status: granted (written permission from the institution, with license), published-open (already published under an open license), pending (asked, not yet granted: items may only go in the private test split), example (format example). held_out: true keeps a paper's items out of the public dev split even when permission allows publishing, to protect against contamination. Keep permission letters off GitHub; record who granted it and when.",
+  "papers": [
+    {
+      "id": "example-institute-2026-intermediate-doctrine",
+      "institution": "Example Institute (fictional)",
+      "institution_type": "monastic college",
+      "tradition": "tibetan",
+      "level": "intermediate",
+      "language": "en",
+      "year": 2026,
+      "subject": "Doctrine",
+      "source": "Fictional paper for format checks.",
+      "published_online": false,
+      "permission": {"status": "example", "license": null, "granted_by": null, "date": null, "held_out": false},
+      "example": true
+    }
+  ]
+}

@@ -4,6 +4,10 @@ BuddhistBench is built by people from many Buddhist traditions. Each tradition o
 
 ## Ways to help
 
+- **Bring exam papers** from your monastery, shedra, university or exam system, with permission: see [docs/exams.md](./docs/exams.md).
+- **Propose a fix** (instructions, reference material or a skill) for a failure you see often: see [docs/fixes.md](./docs/fixes.md).
+- **Tag failures** when grading: say what kind of mistake a wrong answer makes, not only that it is wrong.
+
 - **Write questions** for your tradition's track or for core.
 - **Review questions**, for your own tradition (same-tradition review) or another (cross-tradition review).
 - **Dispute a key** you believe is wrong for your tradition: open a "Dispute an answer" issue.

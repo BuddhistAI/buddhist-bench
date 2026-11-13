@@ -2,17 +2,22 @@
 
 An open benchmark for how well AI models know the Buddhist traditions: their histories, texts, doctrines and practices, and which tradition holds which view.
 
-BuddhistBench has two parts:
+**Goal:** find out where commercial AI gets Buddhism wrong, and which fixes (instructions, reference material, skills, published sources) make it more reliable. Coverage grows bottom-up: small, expert-made sets on specific traditions, texts and exams, built with the communities that own them, adding up over time.
+
+BuddhistBench is made of tracks:
 
 - **Core track**: questions shared by every tradition. Pan-Buddhist facts, plus questions that test whether a model attributes views to the right tradition and avoids presenting one school as "Buddhism".
 - **Tradition tracks**: each tradition writes, reviews and owns questions about itself, in its own languages (Theravāda, Tibetan, Chan/Zen, Pure Land, Tendai, Shingon, Nichiren and more).
 - **Text tracks**: questions on one work, such as *The Thirty-Seven Practices of Bodhisattvas*, answered from its commentaries and keyed to commentary and tradition.
+- **Exam tracks**: real exam papers from monasteries, shedras, Buddhist universities and national exam systems, used with permission, so models are tested the way students are ([docs/exams.md](./docs/exams.md)).
+
+Graders tag *what kind* of mistake each wrong answer makes (misattribution, invented sources, flattening one school into "Buddhism", ...), and **fixes** are measured against a baseline on the same items ([docs/fixes.md](./docs/fixes.md)).
 
 Models are run through OpenRouter in several modes (closed-book, the provider's own web search, and a search tool whose every query we log), and **intervention studies** measure whether accurate, sourced material published about a text reaches AI answers, how fast, and through which models. Design: [docs/intervention-study.md](./docs/intervention-study.md).
 
 It is maintained in the open by Buddhist organizations working together. Founded by WeBuddhist.
 
-> **Status: 0.2.0, scaffold.** The structure, schema, scorer and rules are in place. The only items so far are clearly marked format examples (`example.jsonl`); there is no real data yet. See [CONTRIBUTING.md](./CONTRIBUTING.md) to help write it.
+> **Status: 0.3.0, scaffold.** The structure, schema, scorer and rules are in place. The only items so far are clearly marked format examples (`example.jsonl`); there is no real data yet. See [CONTRIBUTING.md](./CONTRIBUTING.md) to help write it.
 
 ## The key rule
 
@@ -34,6 +39,7 @@ tracks/index.json                every track (active or planned)
 tracks/<track>/
   TRACK.md                       scope, sources, owners
   commentaries.json              text tracks: commentaries answers are keyed to
+  papers.json                    exam tracks: papers, institutions and permissions
   track.json                     track version and owners
   data/<lang>/example.jsonl      format examples (never on a leaderboard)
   data/<lang>/dev.jsonl          public items
@@ -48,6 +54,7 @@ scripts/check_interventions.py   daily liveness check of published interventions
 scripts/analyze_study.py         time series and effects for a study
 scripts/export_hf.py             build the Hugging Face release
 docs/                            design, schema, scoring, review process
+fixes/<id>/                      model-side fixes (system prompt, reference material, skill)
 ```
 
 ## Question types

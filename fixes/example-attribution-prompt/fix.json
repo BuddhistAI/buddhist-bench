@@ -1,0 +1,3 @@
+{"id": "example-attribution-prompt", "kind": "system-prompt", "version": "0.1.0", "example": true,
+ "targets": ["misattribution", "flattening", "fabricated-source"], "authors": ["buddhistai-maintainers"],
+ "source": null, "description": "Format example: asks the model to attribute views to traditions and to cite only sources it is sure exist."}

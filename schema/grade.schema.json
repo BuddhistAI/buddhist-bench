@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "BuddhistBench grade",
-  "description": "Grades for short or open items that automatic matching cannot settle, from human experts or a judge panel. One per line.",
+  "description": "Grades for short or open items that automatic matching cannot settle, from human experts or a judge panel. One per line. 'failures' says what went wrong, so results point at the fix that would help (docs/fixes.md).",
   "type": "object",
   "required": ["id", "grader"],
   "properties": {
@@ -9,6 +9,12 @@
     "grader": {"type": "string", "description": "Human handle, or 'panel:<model-a>,<model-b>,<model-c>' with exact model versions."},
     "grade": {"enum": ["correct", "incorrect", "not_attempted"], "description": "For short items."},
     "matched_tradition": {"type": "string"},
-    "criteria": {"type": "object", "additionalProperties": {"type": "boolean"}, "description": "For open items: rubric criterion id -> met."}
+    "criteria": {"type": "object", "additionalProperties": {"type": "boolean"}, "description": "For open items: rubric criterion id -> met."},
+    "failures": {
+      "type": "array",
+      "items": {"enum": ["misattribution", "flattening", "fabricated-source", "fabricated-content", "wrong-fact", "wrong-term", "translation-error", "modernist-framing", "needless-refusal", "over-hedging", "unsafe-advice"]},
+      "description": "What went wrong, if anything. Several allowed. Definitions in docs/fixes.md."
+    },
+    "note": {"type": "string"}
   }
 }

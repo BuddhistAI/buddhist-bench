@@ -18,7 +18,7 @@ SPLITS = {"example", "dev"}  # the test split is private and never committed
 REQUIRED = ["id", "track", "language", "type", "format", "traditions", "topics", "question",
             "positions", "status", "since", "changed", "authors", "reviewers", "sources_license"]
 ALLOWED = set(REQUIRED) | {"translation_of", "difficulty", "choices", "rubric", "accept_decline",
-                           "dispute", "example", "notes", "passage", "commentaries"}
+                           "dispute", "example", "notes", "passage", "commentaries", "exam"}
 STUDY_STATUSES = {"example", "planned", "baseline", "running", "ended"}
 MODES = {"closed-book", "native-search", "logged-search", "forced-search"}
 IV_REQUIRED = ["id", "study", "published_at", "venue_type", "venue", "language", "url", "content_summary",
@@ -27,6 +27,9 @@ VENUES = {"own-site", "partner-site", "wikipedia", "wikidata", "wikisource", "fo
 IV_STATUSES = {"planned", "live", "edited", "reverted", "removed"}
 
 errors = []
+PERMISSION_STATUSES = {"granted", "published-open", "pending", "example"}
+FAILURE_TAGS = set(json.loads((ROOT / "schema" / "grade.schema.json").read_text(encoding="utf-8"))
+                   ["properties"]["failures"]["items"]["enum"])
 
 
 def err(msg):
@@ -79,8 +82,31 @@ for tr in tracks:
         if not SEMVER.match(meta.get("version", "")):
             err(f"tracks/{tid}/track.json: version must be semver")
     commentaries = set()
-    if tr.get("kind", "tradition") not in ("tradition", "text"):
-        err(f"tracks/index.json: {tid} kind must be tradition or text")
+    if tr.get("kind", "tradition") not in ("tradition", "text", "exam"):
+        err(f"tracks/index.json: {tid} kind must be tradition, text or exam")
+    papers = {}
+    if tr.get("kind") == "exam":
+        ppath = tdir / "papers.json"
+        if not ppath.exists():
+            err(f"tracks/{tid}: exam tracks need papers.json")
+        else:
+            for pp in json.loads(ppath.read_text(encoding="utf-8"))["papers"]:
+                pid = pp.get("id")
+                if pid in papers:
+                    err(f"tracks/{tid}/papers.json: duplicate id {pid}")
+                papers[pid] = pp
+                for k in ("institution", "tradition", "level", "language", "year", "permission"):
+                    if k not in pp:
+                        err(f"tracks/{tid}/papers.json: {pid} missing '{k}'")
+                if pp.get("tradition") not in traditions:
+                    err(f"tracks/{tid}/papers.json: {pid} has unknown tradition '{pp.get('tradition')}'")
+                if pp.get("language") not in languages:
+                    err(f"tracks/{tid}/papers.json: {pid} has unknown language '{pp.get('language')}'")
+                perm = pp.get("permission", {})
+                if perm.get("status") not in PERMISSION_STATUSES:
+                    err(f"tracks/{tid}/papers.json: {pid} permission.status must be one of {sorted(PERMISSION_STATUSES)}")
+                if perm.get("status") in ("granted", "published-open") and not perm.get("license"):
+                    err(f"tracks/{tid}/papers.json: {pid} needs permission.license")
     if tr.get("kind") == "text":
         cpath = tdir / "commentaries.json"
         if not cpath.exists():
@@ -155,6 +181,20 @@ for tr in tracks:
             for c in used:
                 if c not in commentaries:
                     err(f"{where}: unknown commentary '{c}' (add it to tracks/{tid}/commentaries.json)")
+            if tr.get("kind") == "exam":
+                ex = it.get("exam") or {}
+                pp = papers.get(ex.get("paper"))
+                if pp is None:
+                    err(f"{where}: exam items need exam.paper from tracks/{tid}/papers.json")
+                elif split == "dev":
+                    perm = pp.get("permission", {})
+                    if perm.get("status") not in ("granted", "published-open") or perm.get("held_out"):
+                        err(f"{where}: paper {pp['id']} is not cleared for the public dev split "
+                            "(needs permission granted or published-open, and held_out false)")
+                if pp is not None and pp.get("language") != lang and not it.get("translation_of"):
+                    err(f"{where}: items in another language than the paper need translation_of")
+            elif "exam" in it:
+                err(f"{where}: 'exam' is only for exam tracks")
             if not it.get("positions"):
                 err(f"{where}: needs at least one position")
             fmt = it.get("format")
@@ -243,7 +283,34 @@ for spath in sorted((ROOT / "studies").glob("*/study.json")):
             if check_items and i not in known_items:
                 err(f"{where}: target {i} is not in the study's items")
 
+# ------------------------------------------------------------ model-side fixes
+FIX_KINDS = {"system-prompt", "reference", "skill"}
+n_fixes = 0
+for fpath in sorted((ROOT / "fixes").glob("*/fix.json")):
+    n_fixes += 1
+    d, rel = fpath.parent, fpath.relative_to(ROOT)
+    try:
+        fx = json.loads(fpath.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        err(f"{rel}: invalid JSON ({e})")
+        continue
+    if fx.get("id") != d.name:
+        err(f"{rel}: id must match the folder name")
+    if fx.get("kind") not in FIX_KINDS:
+        err(f"{rel}: kind must be one of {sorted(FIX_KINDS)}")
+    if not SEMVER.match(str(fx.get("version", ""))):
+        err(f"{rel}: version must be semver")
+    if d.name.startswith("example-") != bool(fx.get("example")):
+        err(f"{rel}: example fixes (and only those) are named example-* with example: true")
+    if fx.get("kind") == "skill" and not fx.get("source"):
+        err(f"{rel}: skill fixes cite their source (owner/repo@commit:path)")
+    if not ((d / "system.md").exists() or (d / "context.md").exists()):
+        err(f"{rel}: needs system.md and/or context.md")
+    for t in fx.get("targets", []):
+        if t not in FAILURE_TAGS:
+            err(f"{rel}: unknown failure tag '{t}' in targets")
+
 for e in errors:
     print("ERROR", e)
-print(f"{len(seen_ids)} items, {n_studies} studies checked, {len(errors)} errors")
+print(f"{len(seen_ids)} items, {n_studies} studies, {n_fixes} fixes checked, {len(errors)} errors")
 sys.exit(1 if errors else 0)

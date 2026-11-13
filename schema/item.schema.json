@@ -4,36 +4,163 @@
   "title": "BuddhistBench item",
   "description": "One question. Stored one per line in tracks/<track>/data/<lang>/<split>.jsonl. See docs/schema.md for field meanings and examples.",
   "type": "object",
-  "required": ["id", "track", "language", "type", "format", "traditions", "topics", "question", "positions", "status", "since", "changed", "authors", "reviewers", "sources_license"],
+  "required": [
+    "id",
+    "track",
+    "language",
+    "type",
+    "format",
+    "traditions",
+    "topics",
+    "question",
+    "positions",
+    "status",
+    "since",
+    "changed",
+    "authors",
+    "reviewers",
+    "sources_license"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": {"type": "string", "pattern": "^[a-z0-9-]+-[a-z]{2,3}-[0-9]{4,}$", "description": "<track>-<lang>-<number>; example items use example-<track>-<lang>-<number>. Permanent; never reused."},
-    "track": {"type": "string"},
-    "language": {"type": "string"},
-    "translation_of": {"type": "string", "description": "ID of the item this one translates, if any."},
-    "type": {"enum": ["factual", "attributed", "comparative", "contested", "default-probe", "citation", "false-premise"]},
-    "format": {"enum": ["mcq", "short", "open"]},
-    "difficulty": {"enum": ["basic", "intermediate", "advanced"]},
-    "traditions": {"type": "array", "minItems": 1, "items": {"type": "string"}, "description": "Tradition IDs the item is about."},
-    "topics": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-    "question": {"type": "string", "minLength": 1},
-    "passage": {"type": "array", "items": {"type": "string"}, "description": "Text tracks: verses or sections the question is about, e.g. [\"v12\"]."},
-    "commentaries": {"type": "array", "items": {"type": "string"}, "description": "Text tracks: commentary IDs (from the track's commentaries.json) that the question names."},
-    "choices": {"type": "array", "items": {"type": "object", "required": ["id", "text"], "properties": {"id": {"type": "string"}, "text": {"type": "string"}}, "additionalProperties": false}},
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+-[a-z]{2,3}-[0-9]{4,}$",
+      "description": "<track>-<lang>-<number>; example items use example-<track>-<lang>-<number>. Permanent; never reused."
+    },
+    "track": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "translation_of": {
+      "type": "string",
+      "description": "ID of the item this one translates, if any."
+    },
+    "type": {
+      "enum": [
+        "factual",
+        "attributed",
+        "comparative",
+        "contested",
+        "default-probe",
+        "citation",
+        "false-premise"
+      ]
+    },
+    "format": {
+      "enum": [
+        "mcq",
+        "short",
+        "open"
+      ]
+    },
+    "difficulty": {
+      "enum": [
+        "basic",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "traditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "description": "Tradition IDs the item is about."
+    },
+    "topics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "passage": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Text tracks: verses or sections the question is about, e.g. [\"v12\"]."
+    },
+    "commentaries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Text tracks: commentary IDs (from the track's commentaries.json) that the question names."
+    },
+    "choices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "positions": {
       "type": "array",
       "description": "Accepted answers, each tied to the traditions that hold it. One position with consensus=true for factual items.",
       "items": {
         "type": "object",
-        "required": ["traditions", "answer"],
+        "required": [
+          "traditions",
+          "answer"
+        ],
         "additionalProperties": false,
         "properties": {
-          "traditions": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-          "answer": {"type": "string", "description": "Choice id for mcq, canonical answer text for short, summary of the position for open."},
-          "aliases": {"type": "array", "items": {"type": "string"}, "description": "Other accepted short answers."},
-          "consensus": {"type": "boolean", "description": "Every tradition's reviewers accept this answer."},
-          "commentaries": {"type": "array", "items": {"type": "string"}, "description": "Text tracks: commentary IDs that give this answer."},
-          "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}}
+          "traditions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "answer": {
+            "type": "string",
+            "description": "Choice id for mcq, canonical answer text for short, summary of the position for open."
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Other accepted short answers."
+          },
+          "consensus": {
+            "type": "boolean",
+            "description": "Every tradition's reviewers accept this answer."
+          },
+          "commentaries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Text tracks: commentary IDs that give this answer."
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/source"
+            }
+          }
         }
       }
     },
@@ -42,48 +169,146 @@
       "description": "Required for open items. Weighted criteria; negative weights are penalties.",
       "items": {
         "type": "object",
-        "required": ["id", "criterion", "weight"],
+        "required": [
+          "id",
+          "criterion",
+          "weight"
+        ],
         "additionalProperties": false,
         "properties": {
-          "id": {"type": "string"},
-          "criterion": {"type": "string"},
-          "weight": {"type": "number"},
-          "tradition": {"type": "string"}
+          "id": {
+            "type": "string"
+          },
+          "criterion": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "tradition": {
+            "type": "string"
+          }
         }
       }
     },
-    "accept_decline": {"type": "boolean", "description": "True when declining or rejecting the premise is the correct answer (false-premise items)."},
-    "status": {"enum": ["active", "disputed", "retired"]},
-    "dispute": {"type": "string", "description": "Link to the issue when status is disputed."},
-    "example": {"type": "boolean", "description": "True for format examples. Never scored on a leaderboard."},
-    "since": {"type": "string", "description": "Release version that added the item."},
-    "changed": {"type": "string", "description": "Release version of the last change to the question or key."},
-    "authors": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "accept_decline": {
+      "type": "boolean",
+      "description": "True when declining or rejecting the premise is the correct answer (false-premise items)."
+    },
+    "status": {
+      "enum": [
+        "active",
+        "disputed",
+        "retired"
+      ]
+    },
+    "dispute": {
+      "type": "string",
+      "description": "Link to the issue when status is disputed."
+    },
+    "example": {
+      "type": "boolean",
+      "description": "True for format examples. Never scored on a leaderboard."
+    },
+    "since": {
+      "type": "string",
+      "description": "Release version that added the item."
+    },
+    "changed": {
+      "type": "string",
+      "description": "Release version of the last change to the question or key."
+    },
+    "authors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
     "reviewers": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["who", "tradition", "role"],
+        "required": [
+          "who",
+          "tradition",
+          "role"
+        ],
         "additionalProperties": false,
         "properties": {
-          "who": {"type": "string"},
-          "tradition": {"type": "string"},
-          "role": {"enum": ["same-tradition", "cross-tradition"]}
+          "who": {
+            "type": "string"
+          },
+          "tradition": {
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "same-tradition",
+              "cross-tradition"
+            ]
+          }
         }
       }
     },
-    "sources_license": {"type": "string", "description": "Where the question and key came from and under what license, e.g. 'original, MIT' or 'adapted from Nak Tham 2023 exam (Apache-2.0)'."},
-    "notes": {"type": "string"}
+    "sources_license": {
+      "type": "string",
+      "description": "Where the question and key came from and under what license, e.g. 'original, MIT' or 'adapted from Nak Tham 2023 exam (Apache-2.0)'."
+    },
+    "notes": {
+      "type": "string"
+    },
+    "exam": {
+      "type": "object",
+      "description": "Exam tracks: where the question comes from.",
+      "required": [
+        "paper",
+        "question"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "paper": {
+          "type": "string",
+          "description": "Paper ID from the track's papers.json."
+        },
+        "question": {
+          "type": "string",
+          "description": "Question number as printed, e.g. '3(b)'."
+        },
+        "marks": {
+          "type": "number",
+          "description": "Marks available on the original paper."
+        },
+        "marking": {
+          "enum": [
+            "official-key",
+            "marking-scheme",
+            "model-answer",
+            "examiner-review"
+          ],
+          "description": "Where the gold answer or rubric came from."
+        }
+      }
+    }
   },
   "$defs": {
     "source": {
       "type": "object",
-      "required": ["ref"],
+      "required": [
+        "ref"
+      ],
       "additionalProperties": false,
       "properties": {
-        "ref": {"type": "string", "description": "Canonical reference: Pali (SN 56.11), Taishō (T0262), Tōhoku (D3871), or a citation."},
-        "url": {"type": "string"},
-        "note": {"type": "string"}
+        "ref": {
+          "type": "string",
+          "description": "Canonical reference: Pali (SN 56.11), Taishō (T0262), Tōhoku (D3871), or a citation."
+        },
+        "url": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
       }
     }
   }

@@ -1,0 +1,3 @@
+{"id": "example-37-practices-reference", "kind": "reference", "version": "0.1.0", "example": true,
+ "targets": ["fabricated-content", "wrong-fact"], "authors": ["buddhistai-maintainers"],
+ "source": null, "description": "Format example: basic facts about the root text given as reference material, to test whether grounding removes invented content."}

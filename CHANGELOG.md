@@ -8,6 +8,18 @@ Every release of BuddhistBench. Versions follow semver:
 
 For each release, list track versions and changed item IDs, so anyone can see why a score moved.
 
+## [0.3.0] - 2026-11-13
+
+Bottom-up coverage, exam tracks, failure tags and model-side fixes. Goal stated in the README: find where commercial AI gets Buddhism wrong and which fixes make it more reliable. No real data yet.
+
+- Exam tracks (`"kind": "exam"`): `papers.json` per track with institution, tradition, level, language, year and a permission record; items carry `exam: {paper, question, marks, marking}`. The checker keeps papers without permission, or held out, out of the public `dev` split. New format-example track `exam-example`; `nak-tham` (Thai Nak Tham exams, Apache-2.0) listed as planned. Guide: [docs/exams.md](./docs/exams.md).
+- Failure tags in grades (`failures`), counted by the scorer overall and per tradition. Definitions and suggested fixes: [docs/fixes.md](./docs/fixes.md).
+- Model-side fixes: `fixes/<id>/` (`system-prompt`, `reference`, `skill`), `--fix` in `scripts/openrouter_run.py` (recorded in `run.json` as `fix`), and `scripts/compare_runs.py` for baseline-vs-fix comparisons with a paired bootstrap interval. Format examples `example-attribution-prompt`, `example-37-practices-reference`.
+- Scorer 0.3.0: adds `failures` and `by_paper`. No item score changes, so earlier results stay comparable.
+- New item format examples: `example-exam-example-en-0001`..`0002`.
+
+Track versions: core 0.1.0, theravada 0.1.0, tibetan 0.1.0, 37-practices 0.1.0, exam-example 0.1.0.
+
 ## [0.2.0] - 2026-11-13
 
 Text tracks, the OpenRouter runner and intervention studies ([design](./docs/intervention-study.md)). No real data yet.

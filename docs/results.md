@@ -20,6 +20,7 @@ Every model run is a folder with four files. The BuddhistAI leaderboard site rea
 | `prompt_version`, `scorer_version`, `judge_panel` | Prompt and scorer used; judge panel models with versions, or null. |
 | `repeats`, `temperature`, `engine`, `search_backend` | Run settings (`temperature: null` = provider default). |
 | `harness` | `BuddhistAI/buddhist-bench@<commit>:scripts/openrouter_run.py (runner x.y.z)` |
+| `fix` | Model-side fix applied (`{id, kind, version, targets, source, path, sha256}`), or null for the baseline. Run IDs of fixed runs end in `-fix-<id>`. See [fixes.md](./fixes.md). |
 | `study` | Study ID, or null. |
 | `date`, `started_at`, `finished_at`, `calls`, `cost_usd`, `dry_run`, `by` | Bookkeeping. Dry runs are never published. |
 

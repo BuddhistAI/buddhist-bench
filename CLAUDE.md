@@ -8,3 +8,5 @@
 - Run `python3 scripts/check.py` before pushing.
 - Text tracks (`kind: text`) key answers to commentaries in the track's `commentaries.json`. Intervention studies live in `studies/` (design: `docs/intervention-study.md`); never edit past runs, and log interventions the day they go live.
 - Never publish an intervention that is not accurate, sourced and reviewed; follow Wikipedia policies (COI disclosure, reliable sources). Never commit API keys: the runner reads `OPENROUTER_API_KEY` and `BRAVE_API_KEY` from the environment.
+- Exam tracks (`kind: exam`) need `papers.json` with a permission record per paper; only `granted` or `published-open` papers that are not `held_out` may have public `dev` items. Never commit permission letters or private papers.
+- Model-side fixes live in `fixes/<id>/` (docs/fixes.md); bump a fix's version when its text changes. Compare runs with `scripts/compare_runs.py`.
