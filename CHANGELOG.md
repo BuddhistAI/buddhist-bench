@@ -8,6 +8,15 @@ Every release of BuddhistBench. Versions follow semver:
 
 For each release, list track versions and changed item IDs, so anyone can see why a score moved.
 
+## [0.4.0] - 2026-11-13
+
+Imported benchmarks and the related-benchmarks list. No real data yet.
+
+- [docs/related-benchmarks.md](./docs/related-benchmarks.md): Buddhist and other-religion benchmarks with maker, traditions, languages, size, license, link and status (imported, import ready, ask first, link only), plus the methods BuddhistBench borrows.
+- Imported tracks: `source` block in `track.json` (kind, name, maker, url, revision, license, imported_on, contamination) and a required `SOURCE.md`. Only MIT-compatible licenses can be imported (checked). Imported items keep the source's answer keys and do not need BuddhistBench reviewers.
+- Scorer: `by_track` breakdown, `sources` block listing each imported source and its contamination flag, and `--exclude-public` to leave out published sets models may have memorised. Per-item scores unchanged.
+- `nak-tham` track (Thai national Dhamma exams, Apache-2.0): importer `scripts/import_nak_tham.py` and a manual workflow `.github/workflows/import-nak-tham.yml` that downloads a pinned revision from Hugging Face, converts it and pushes a branch for review. Track stays planned until the import is merged.
+
 ## [0.3.0] - 2026-11-13
 
 Bottom-up coverage, exam tracks, failure tags and model-side fixes. Goal stated in the README: find where commercial AI gets Buddhism wrong and which fixes make it more reliable. No real data yet.

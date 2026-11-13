@@ -1,0 +1,73 @@
+name: import-nak-tham
+
+# Manually run: downloads the Thai Nak Tham exam dataset from Hugging Face at a
+# given revision (default: latest), converts it with scripts/import_nak_tham.py,
+# activates the track, runs the checks, and pushes the result to a branch
+# import/nak-tham-<revision> for review. Nothing goes to main without a PR.
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: "Hugging Face commit or branch (default: main)"
+        required: false
+        default: "main"
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "huggingface_hub>=0.24" pandas pyarrow
+      - name: Download
+        id: dl
+        run: |
+          python3 - <<'PY'
+          import os
+          from huggingface_hub import HfApi, snapshot_download
+          rev = os.environ.get("REV") or "main"
+          info = HfApi().dataset_info("biodatlab/thai_buddhist_studies_exam", revision=rev)
+          path = snapshot_download("biodatlab/thai_buddhist_studies_exam", repo_type="dataset", revision=info.sha, local_dir="hf-src")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"sha={info.sha}\n")
+          PY
+          find hf-src -type f | grep -v "/.cache/" | sort
+        env:
+          REV: ${{ inputs.revision }}
+      - name: Inspect
+        run: |
+          files=$(find hf-src -type f \( -name '*.parquet' -o -name '*.csv' -o -name '*.jsonl' \) | grep -v "/.cache/" | sort)
+          python3 scripts/import_nak_tham.py --inspect $files
+      - name: Convert
+        run: |
+          files=$(find hf-src -type f \( -name '*.parquet' -o -name '*.csv' -o -name '*.jsonl' \) | grep -v "/.cache/" | sort)
+          python3 scripts/import_nak_tham.py --revision "${{ steps.dl.outputs.sha }}" $files | tee import-summary.json
+          python3 - <<'PY'
+          import json, datetime
+          p = "tracks/index.json"; s = json.load(open(p, encoding="utf-8"))
+          for t in s["tracks"]:
+              if t["id"] == "nak-tham":
+                  t["status"] = "active"
+          open(p, "w", encoding="utf-8").write(json.dumps(s, ensure_ascii=False, indent=2) + "\n")
+          p = "tracks/nak-tham/track.json"; t = json.load(open(p, encoding="utf-8"))
+          t["source"]["revision"] = "${{ steps.dl.outputs.sha }}"
+          t["source"]["imported_on"] = datetime.date.today().isoformat()
+          open(p, "w", encoding="utf-8").write(json.dumps(t, ensure_ascii=False, indent=2) + "\n")
+          PY
+      - run: python3 scripts/check.py
+      - name: Push branch
+        run: |
+          branch="import/nak-tham-${{ steps.dl.outputs.sha }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          cp import-summary.json tracks/nak-tham/IMPORT-SUMMARY.json
+          git add tracks/ 
+          git commit -m "Import Nak Tham exams at ${{ steps.dl.outputs.sha }}"
+          git push origin "$branch"

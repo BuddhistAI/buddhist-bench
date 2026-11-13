@@ -22,7 +22,7 @@ import sys
 import unicodedata
 from collections import defaultdict
 
-SCORER_VERSION = "0.3.0"  # 0.3.0: adds failure-tag counts, by_paper (exam tracks), by_language and parallel ids; 0.2.0: by_commentary and search stats; per-item scores unchanged
+SCORER_VERSION = "0.3.0"  # 0.3.0: adds failure-tag counts, by_paper (exam tracks), by_language, by_track, sources and parallel ids; 0.2.0: by_commentary and search stats; per-item scores unchanged
 
 
 def load_jsonl(path):
@@ -127,6 +127,7 @@ def build_report(items, resps, grades=None):
         if it.get("exam"):
             keys.append(("paper", it["exam"]["paper"]))
         keys.append(("language", it.get("language", "?")))
+        keys.append(("track", it.get("track", "?")))
         for group, key in keys:
             buckets[group][key].append(score)
             outcomes[f"{group}:{key}"][outcome] += 1
@@ -146,6 +147,7 @@ def build_report(items, resps, grades=None):
         "by_commentary": summary("commentary"),
         "by_paper": summary("paper"),
         "by_language": summary("language"),
+        "by_track": summary("track"),
         "by_type": summary("type"),
         "by_format": summary("format"),
         "consensus_subset": summary("subset").get("consensus", {}),
@@ -163,6 +165,8 @@ def build_report(items, resps, grades=None):
             "cited_domains": dict(sorted(_domains(u for s in searched for u in s.get("cited_urls", [])).items(),
                                          key=lambda kv: -kv[1])[:25]),
         }
+    report["sources"] = {t: {k: track_source(t).get(k) for k in ("kind", "name", "revision", "license", "contamination")}
+                         for t in sorted({i.get("track") for i in items}) if track_source(t)}
     report["per_item"] = per_item
     return report
 
@@ -176,6 +180,15 @@ def _domains(urls):
     return out
 
 
+def track_source(track, _cache={}):
+    """The 'source' block of tracks/<track>/track.json ({} for original tracks)."""
+    if track not in _cache:
+        from pathlib import Path
+        p = Path(__file__).resolve().parent.parent / "tracks" / str(track) / "track.json"
+        _cache[track] = (json.loads(p.read_text(encoding="utf-8")).get("source") or {}) if p.exists() else {}
+    return _cache[track]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--items", nargs="+", required=True)
@@ -183,10 +196,14 @@ def main():
     ap.add_argument("--grades")
     ap.add_argument("--include-examples", action="store_true",
                     help="Score example items (format checks only; never for leaderboards).")
+    ap.add_argument("--exclude-public", action="store_true",
+                    help="Leave out tracks marked source.contamination 'public' (published sets models may have memorised).")
     args = ap.parse_args()
 
     items = [i for p in args.items for i in load_jsonl(p)]
     items = [i for i in items if i.get("status") == "active"]
+    if args.exclude_public:
+        items = [i for i in items if track_source(i.get("track")).get("contamination") != "public"]
     if not args.include_examples:
         items = [i for i in items if not i.get("example")]
     resps = {r["id"]: r for r in load_jsonl(args.responses)}

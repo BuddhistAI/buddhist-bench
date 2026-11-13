@@ -27,6 +27,8 @@ VENUES = {"own-site", "partner-site", "wikipedia", "wikidata", "wikisource", "fo
 IV_STATUSES = {"planned", "live", "edited", "reverted", "removed"}
 
 errors = []
+CONTAMINATION = {"none", "low", "public"}
+MIT_COMPATIBLE = {"MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "CC0-1.0", "CC-BY-4.0", "Unlicense", "public-domain"}
 all_items, translations = {}, []
 PERMISSION_STATUSES = {"granted", "published-open", "pending", "example"}
 FAILURE_TAGS = set(json.loads((ROOT / "schema" / "grade.schema.json").read_text(encoding="utf-8"))
@@ -78,10 +80,26 @@ for tr in tracks:
             err(f"tracks/{tid}: missing {f}")
     if f"/tracks/{tid}/" not in codeowners:
         err(f".github/CODEOWNERS: no owner line for /tracks/{tid}/")
+    meta = {}
     if (tdir / "track.json").exists():
         meta = json.loads((tdir / "track.json").read_text(encoding="utf-8"))
         if not SEMVER.match(meta.get("version", "")):
             err(f"tracks/{tid}/track.json: version must be semver")
+    src = meta.get("source") or {"kind": "original"}
+    imported = src.get("kind") == "imported"
+    if src.get("kind") not in ("original", "imported"):
+        err(f"tracks/{tid}/track.json: source.kind must be original or imported")
+    if src.get("contamination", "none") not in CONTAMINATION:
+        err(f"tracks/{tid}/track.json: source.contamination must be one of {sorted(CONTAMINATION)}")
+    if imported:
+        for k in ("name", "maker", "url", "revision", "license", "imported_on", "contamination"):
+            if not src.get(k):
+                err(f"tracks/{tid}/track.json: imported tracks need source.{k}")
+        if src.get("license") not in MIT_COMPATIBLE:
+            err(f"tracks/{tid}/track.json: source.license '{src.get('license')}' is not on the MIT-compatible list "
+                f"{sorted(MIT_COMPATIBLE)}; link the set in docs/related-benchmarks.md instead of importing it")
+        if not (tdir / "SOURCE.md").exists():
+            err(f"tracks/{tid}: imported tracks need SOURCE.md")
     commentaries = set()
     if tr.get("kind", "tradition") not in ("tradition", "text", "exam"):
         err(f"tracks/index.json: {tid} kind must be tradition, text or exam")
@@ -222,7 +240,7 @@ for tr in tracks:
                 err(f"{where}: translated/adapted items (and only those) need translation_of")
             if it.get("translation_of"):
                 translations.append((where, iid, it["translation_of"], lang, it))
-            if split == "dev" and it.get("status") == "active":
+            if split == "dev" and it.get("status") == "active" and not imported:
                 roles = {r["role"] for r in it.get("reviewers", [])}
                 if not {"same-tradition", "cross-tradition"} <= roles:
                     err(f"{where}: active dev items need a same-tradition and a cross-tradition reviewer")

@@ -6,7 +6,7 @@
     {"id": "tibetan", "status": "active", "title": "Tibetan", "covers": ["tibetan"], "summary": "Tibetan and Himalayan schools, by reviewers from each school."},
     {"id": "37-practices", "status": "active", "kind": "text", "title": "The Thirty-Seven Practices of Bodhisattvas", "covers": ["tibetan"], "summary": "Text track: questions on one work, answered from its commentaries and keyed to commentary and tradition. Example items only."},
     {"id": "exam-example", "status": "active", "kind": "exam", "title": "Exam track (format example)", "covers": ["shared", "tibetan"], "summary": "Fictional paper showing the exam-track format."},
-    {"id": "nak-tham", "status": "planned", "kind": "exam", "title": "Thai Nak Tham and Dhamma Studies exams", "covers": ["theravada.thailand"], "summary": "Candidate first real exam track: 4,100 questions from the 2020, 2022 and 2023 exams, already published under Apache-2.0 by Mahidol University biodatlab. Needs a Thai reviewer and a check of the OCR."},
+    {"id": "nak-tham", "status": "planned", "kind": "exam", "title": "Thai Nak Tham and Dhamma Studies exams", "covers": ["theravada.thailand"], "summary": "Imported exam track: about 4,100 questions from the 2020, 2022 and 2023 Thai national Dhamma exams, published under Apache-2.0 by Mahidol University biodatlab. Becomes active when the import runs."},
     {"id": "chan-zen", "status": "planned", "title": "Chan / Zen / Seon / Thiền", "covers": ["east-asian.chan-zen"], "summary": ""},
     {"id": "pure-land", "status": "planned", "title": "Pure Land", "covers": ["east-asian.pure-land"], "summary": ""},
     {"id": "tiantai-tendai", "status": "planned", "title": "Tiantai / Tendai", "covers": ["east-asian.tiantai-tendai"], "summary": ""},

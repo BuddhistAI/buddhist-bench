@@ -3,7 +3,7 @@ message: "If you use BuddhistBench, please cite it as below."
 title: "BuddhistBench: an open benchmark for AI knowledge of the Buddhist traditions"
 authors:
   - name: "BuddhistAI contributors"
-version: 0.3.0
+version: 0.4.0
 date-released: 2026-11-13
 license: MIT
 repository-code: "https://github.com/BuddhistAI/buddhist-bench"

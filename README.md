@@ -13,13 +13,15 @@ BuddhistBench is made of tracks:
 
 **Language is an axis.** The same model can do well in English and fail in Tibetan or Thai, so items are asked in many languages, as native questions and as reviewed translations linked to their originals. Results can be filtered by language, and the gap between languages on the same questions is a headline number ([docs/languages.md](./docs/languages.md)). Reading and translating source languages (Classical Tibetan, Pali, Sanskrit, Classical Chinese) is tested separately in [buddhist-benchmarks](https://github.com/BuddhistAI/buddhist-benchmarks).
 
+**Existing benchmarks are brought in, not rebuilt.** Openly licensed sets such as the Thai Nak Tham exams are imported as tracks, credited and pinned to their source version, and count in aggregate scores. Because published sets may already be in models' training data, they are marked `contamination: public`, results always show each source separately, and `score.py --exclude-public` leaves them out. The full list of related benchmarks, imported or linked: [docs/related-benchmarks.md](./docs/related-benchmarks.md).
+
 Graders tag *what kind* of mistake each wrong answer makes (misattribution, invented sources, flattening one school into "Buddhism", ...), and **fixes** are measured against a baseline on the same items ([docs/fixes.md](./docs/fixes.md)).
 
 Models are run through OpenRouter in several modes (closed-book, the provider's own web search, and a search tool whose every query we log), and **intervention studies** measure whether accurate, sourced material published about a text reaches AI answers, how fast, and through which models. Design: [docs/intervention-study.md](./docs/intervention-study.md).
 
 It is maintained in the open by Buddhist organizations working together. Founded by WeBuddhist.
 
-> **Status: 0.3.0, scaffold.** The structure, schema, scorer and rules are in place. The only items so far are clearly marked format examples (`example.jsonl`); there is no real data yet. See [CONTRIBUTING.md](./CONTRIBUTING.md) to help write it.
+> **Status: 0.4.0, scaffold.** The structure, schema, scorer and rules are in place. The only items so far are clearly marked format examples (`example.jsonl`); there is no real data yet. See [CONTRIBUTING.md](./CONTRIBUTING.md) to help write it.
 
 ## The key rule
 
@@ -109,3 +111,5 @@ Each release is mirrored to Hugging Face at [BuddhistAI/buddhist-bench](https://
 ## License
 
 MIT, for code and data. Only contribute questions you wrote or that come from sources compatible with MIT, and say where each came from (`sources_license`).
+
+Imported tracks keep their own license, recorded in `tracks/<id>/track.json` and `SOURCE.md` (for example, `nak-tham` is Apache-2.0). Only MIT-compatible sets are imported.

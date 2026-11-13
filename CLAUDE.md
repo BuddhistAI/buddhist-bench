@@ -11,3 +11,4 @@
 - Exam tracks (`kind: exam`) need `papers.json` with a permission record per paper; only `granted` or `published-open` papers that are not `held_out` may have public `dev` items. Never commit permission letters or private papers.
 - Model-side fixes live in `fixes/<id>/` (docs/fixes.md); bump a fix's version when its text changes. Compare runs with `scripts/compare_runs.py`.
 - Question language is an axis: translated items set `origin` and `translation_of` (pointing at the original) and need a native-speaker `language` reviewer. Source-language reading and translation tasks belong in buddhist-benchmarks, not here.
+- Imported tracks (`source.kind: imported` in track.json) need SOURCE.md, a pinned revision and an MIT-compatible license; mark published sets `contamination: public`. Keep docs/related-benchmarks.md up to date when importing or finding a set.
