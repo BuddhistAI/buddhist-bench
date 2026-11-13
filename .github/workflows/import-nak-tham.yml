@@ -63,7 +63,7 @@ jobs:
       - run: python3 scripts/check.py
       - name: Push branch
         run: |
-          branch="import/nak-tham-${{ steps.dl.outputs.sha }}"
+          branch="import/nak-tham-run${{ github.run_number }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$branch"
@@ -71,3 +71,4 @@ jobs:
           git add tracks/ 
           git commit -m "Import Nak Tham exams at ${{ steps.dl.outputs.sha }}"
           git push origin "$branch"
+          echo "pushed $branch"
