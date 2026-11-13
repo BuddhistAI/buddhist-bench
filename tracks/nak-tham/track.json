@@ -2,16 +2,20 @@
   "id": "nak-tham",
   "kind": "exam",
   "version": "0.1.0",
-  "owners": ["@ngawangtrinley"],
-  "languages": ["th"],
+  "owners": [
+    "@ngawangtrinley"
+  ],
+  "languages": [
+    "th"
+  ],
   "source": {
     "kind": "imported",
     "name": "Thai Buddhist Studies Examination (Nak Tham)",
     "maker": "Biomedical and Data Lab, Mahidol University (biodatlab); questions set by the Thai national Dhamma exam office",
     "url": "https://huggingface.co/datasets/biodatlab/thai_buddhist_studies_exam",
-    "revision": "set by scripts/import_nak_tham.py",
+    "revision": "5b462121b72d51144bda2a88cde10077f3810f78",
     "license": "Apache-2.0",
-    "imported_on": "set by scripts/import_nak_tham.py",
+    "imported_on": "2026-11-13",
     "contamination": "public"
   },
   "note": "Owner is a placeholder until a Thai Theravāda reviewer takes the track."
