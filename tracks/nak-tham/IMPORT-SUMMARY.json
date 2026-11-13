@@ -1,0 +1,107 @@
+{
+  "imported": 4075,
+  "skipped": 25,
+  "papers": 29,
+  "problems": [
+    {
+      "row": 356,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 399,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 850,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1065,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1131,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1132,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1255,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1321,
+      "file": "thai_buddhist_studies_exam_2020.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1605,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1743,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 1984,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2100,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2138,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2233,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2359,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2360,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2361,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2362,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2364,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    },
+    {
+      "row": 2396,
+      "file": "thai_buddhist_studies_exam_2022.csv",
+      "why": "missing question, not 4 choices, or answer not found"
+    }
+  ]
+}
