@@ -15,7 +15,7 @@ Imported benchmarks and the related-benchmarks list. No real data yet.
 - [docs/related-benchmarks.md](./docs/related-benchmarks.md): Buddhist and other-religion benchmarks with maker, traditions, languages, size, license, link and status (imported, import ready, ask first, link only), plus the methods BuddhistBench borrows.
 - Imported tracks: `source` block in `track.json` (kind, name, maker, url, revision, license, imported_on, contamination) and a required `SOURCE.md`. Only MIT-compatible licenses can be imported (checked). Imported items keep the source's answer keys and do not need BuddhistBench reviewers.
 - Scorer: `by_track` breakdown, `sources` block listing each imported source and its contamination flag, and `--exclude-public` to leave out published sets models may have memorised. Per-item scores unchanged.
-- `nak-tham` track (Thai national Dhamma exams, Apache-2.0): importer `scripts/import_nak_tham.py` and a manual workflow `.github/workflows/import-nak-tham.yml` that downloads a pinned revision from Hugging Face, converts it and pushes a branch for review. Track stays planned until the import is merged.
+- `nak-tham` track (Thai national Dhamma exams, Apache-2.0): importer `scripts/import_nak_tham.py` and a manual workflow `.github/workflows/import-nak-tham.yml` that downloads a pinned revision from Hugging Face, converts it and pushes a branch for review. Imported at Hugging Face revision 5b46212: 4,075 questions in 29 papers (25 source rows could not be converted; see `tracks/nak-tham/IMPORT-SUMMARY.json`). These are the first non-example items in BuddhistBench.
 
 ## [0.3.0] - 2026-11-13
 

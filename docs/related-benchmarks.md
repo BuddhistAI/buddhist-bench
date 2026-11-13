@@ -15,7 +15,7 @@ Only sets under MIT-compatible licenses can be imported (MIT, Apache-2.0, BSD, C
 
 | Benchmark | Maker | Traditions | Languages | Format and size | License | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| [Thai Buddhist Studies Exam (Nak Tham)](https://huggingface.co/datasets/biodatlab/thai_buddhist_studies_exam) | Mahidol University biodatlab | Thai Theravāda | th | ~4,100 four-option MCQs from the 2020, 2022, 2023 national Dhamma exams, 3 levels | Apache-2.0 | import ready (`nak-tham`) |
+| [Thai Buddhist Studies Exam (Nak Tham)](https://huggingface.co/datasets/biodatlab/thai_buddhist_studies_exam) | Mahidol University biodatlab | Thai Theravāda | th | ~4,100 four-option MCQs from the 2020, 2022, 2023 national Dhamma exams, 3 levels | Apache-2.0 | imported (`nak-tham`, 4,075 questions) |
 | [BudHistBenchmark](https://mbingenheimer.net/budhistbenchmark/) | Marcus Bingenheimer | Chinese, Japanese, some Theravāda (Burma, Thailand) | en | 260 four-option MCQs on Buddhist history; top models ~95% (saturated) | not stated | ask first |
 | [DharmaBench](https://aclanthology.org/2025.ijcnlp-long.114.pdf) | Reichman University, Univ. of Hamburg | Indian and Tibetan canonical texts | sa, bo | 13 classification and span-detection tasks, ~4,900 test items | CC-BY-4.0 (data), Apache-2.0 (code) | link only (text-processing tasks, fits buddhist-benchmarks) |
 | [MITRA-zh-eval](https://aclanthology.org/2025.nlp4dh-1.12) | Dharmamitra (Berkeley, Temple, Düsseldorf) | Chinese canon (CBETA) | lzh → en | 2,662 sentence pairs for translation evaluation | CC BY 4.0 (paper); data on GitHub | link only (translation, fits buddhist-benchmarks) |
