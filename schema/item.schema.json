@@ -36,7 +36,7 @@
     },
     "translation_of": {
       "type": "string",
-      "description": "ID of the item this one translates, if any."
+      "description": "ID of the source item when origin is translated or adapted. Items sharing a source form a parallel group for cross-lingual comparison."
     },
     "type": {
       "enum": [
@@ -245,8 +245,10 @@
           "role": {
             "enum": [
               "same-tradition",
-              "cross-tradition"
-            ]
+              "cross-tradition",
+              "language"
+            ],
+            "description": "language: a native speaker who checked a translated or adapted item against its source."
           }
         }
       }
@@ -289,6 +291,14 @@
           "description": "Where the gold answer or rubric came from."
         }
       }
+    },
+    "origin": {
+      "enum": [
+        "native",
+        "translated",
+        "adapted"
+      ],
+      "description": "native: written in this language (default). translated: a faithful translation of translation_of. adapted: translated and changed to suit this language's readers (cultural references, terms); not a strict parallel."
     }
   },
   "$defs": {

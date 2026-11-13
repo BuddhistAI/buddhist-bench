@@ -22,7 +22,7 @@ import sys
 import unicodedata
 from collections import defaultdict
 
-SCORER_VERSION = "0.3.0"  # 0.3.0: adds failure-tag counts and by_paper (exam tracks); 0.2.0: by_commentary and search stats; per-item scores unchanged
+SCORER_VERSION = "0.3.0"  # 0.3.0: adds failure-tag counts, by_paper (exam tracks), by_language and parallel ids; 0.2.0: by_commentary and search stats; per-item scores unchanged
 
 
 def load_jsonl(path):
@@ -103,7 +103,8 @@ def build_report(items, resps, grades=None):
     for it in items:
         resp = resps.get(it["id"])
         outcome, score, matched = grade_item(it, resp, grades.get(it["id"]))
-        row = {"id": it["id"], "outcome": outcome, "score": round(score, 4), "matched": matched}
+        row = {"id": it["id"], "outcome": outcome, "score": round(score, 4), "matched": matched,
+               "language": it.get("language"), "parallel": it.get("translation_of") or it["id"]}
         tags = (grades.get(it["id"]) or {}).get("failures") or []
         if tags:
             row["failures"] = tags
@@ -125,6 +126,7 @@ def build_report(items, resps, grades=None):
             keys.append(("commentary", c))
         if it.get("exam"):
             keys.append(("paper", it["exam"]["paper"]))
+        keys.append(("language", it.get("language", "?")))
         for group, key in keys:
             buckets[group][key].append(score)
             outcomes[f"{group}:{key}"][outcome] += 1
@@ -143,6 +145,7 @@ def build_report(items, resps, grades=None):
         "by_tradition": summary("tradition"),
         "by_commentary": summary("commentary"),
         "by_paper": summary("paper"),
+        "by_language": summary("language"),
         "by_type": summary("type"),
         "by_format": summary("format"),
         "consensus_subset": summary("subset").get("consensus", {}),

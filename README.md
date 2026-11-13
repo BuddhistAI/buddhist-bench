@@ -11,6 +11,8 @@ BuddhistBench is made of tracks:
 - **Text tracks**: questions on one work, such as *The Thirty-Seven Practices of Bodhisattvas*, answered from its commentaries and keyed to commentary and tradition.
 - **Exam tracks**: real exam papers from monasteries, shedras, Buddhist universities and national exam systems, used with permission, so models are tested the way students are ([docs/exams.md](./docs/exams.md)).
 
+**Language is an axis.** The same model can do well in English and fail in Tibetan or Thai, so items are asked in many languages, as native questions and as reviewed translations linked to their originals. Results can be filtered by language, and the gap between languages on the same questions is a headline number ([docs/languages.md](./docs/languages.md)). Reading and translating source languages (Classical Tibetan, Pali, Sanskrit, Classical Chinese) is tested separately in [buddhist-benchmarks](https://github.com/BuddhistAI/buddhist-benchmarks).
+
 Graders tag *what kind* of mistake each wrong answer makes (misattribution, invented sources, flattening one school into "Buddhism", ...), and **fixes** are measured against a baseline on the same items ([docs/fixes.md](./docs/fixes.md)).
 
 Models are run through OpenRouter in several modes (closed-book, the provider's own web search, and a search tool whose every query we log), and **intervention studies** measure whether accurate, sourced material published about a text reaches AI answers, how fast, and through which models. Design: [docs/intervention-study.md](./docs/intervention-study.md).

@@ -17,7 +17,7 @@ STATUSES = {"active", "disputed", "retired"}
 SPLITS = {"example", "dev"}  # the test split is private and never committed
 REQUIRED = ["id", "track", "language", "type", "format", "traditions", "topics", "question",
             "positions", "status", "since", "changed", "authors", "reviewers", "sources_license"]
-ALLOWED = set(REQUIRED) | {"translation_of", "difficulty", "choices", "rubric", "accept_decline",
+ALLOWED = set(REQUIRED) | {"translation_of", "origin", "difficulty", "choices", "rubric", "accept_decline",
                            "dispute", "example", "notes", "passage", "commentaries", "exam"}
 STUDY_STATUSES = {"example", "planned", "baseline", "running", "ended"}
 MODES = {"closed-book", "native-search", "logged-search", "forced-search"}
@@ -27,6 +27,7 @@ VENUES = {"own-site", "partner-site", "wikipedia", "wikidata", "wikisource", "fo
 IV_STATUSES = {"planned", "live", "edited", "reverted", "removed"}
 
 errors = []
+all_items, translations = {}, []
 PERMISSION_STATUSES = {"granted", "published-open", "pending", "example"}
 FAILURE_TAGS = set(json.loads((ROOT / "schema" / "grade.schema.json").read_text(encoding="utf-8"))
                    ["properties"]["failures"]["items"]["enum"])
@@ -148,6 +149,7 @@ for tr in tracks:
             if iid in seen_ids:
                 err(f"{where}: duplicate id (also {seen_ids[iid]})")
             seen_ids[iid] = where
+            all_items[iid] = it
             if it.get("track") != tid or it.get("language") != lang:
                 err(f"{where}: track/language fields must match the folder ({tid}/{lang})")
             prefix = f"{'example-' if split == 'example' else ''}{tid}-{lang}-"
@@ -213,10 +215,35 @@ for tr in tracks:
                 err(f"{where}: default-probe items are mcq with one position per tradition")
             if it.get("type") == "false-premise" and not it.get("accept_decline"):
                 err(f"{where}: false-premise items need accept_decline: true")
+            origin = it.get("origin", "native")
+            if origin not in ("native", "translated", "adapted"):
+                err(f"{where}: origin must be native, translated or adapted")
+            if (origin != "native") != bool(it.get("translation_of")):
+                err(f"{where}: translated/adapted items (and only those) need translation_of")
+            if it.get("translation_of"):
+                translations.append((where, iid, it["translation_of"], lang, it))
             if split == "dev" and it.get("status") == "active":
                 roles = {r["role"] for r in it.get("reviewers", [])}
-                if roles != {"same-tradition", "cross-tradition"}:
+                if not {"same-tradition", "cross-tradition"} <= roles:
                     err(f"{where}: active dev items need a same-tradition and a cross-tradition reviewer")
+                if origin != "native" and "language" not in roles:
+                    err(f"{where}: active translated items need a native-speaker 'language' reviewer")
+
+# ------------------------------------------------------------ parallel items
+for where, iid, src, lang, it in translations:
+    if src not in all_items:
+        err(f"{where}: translation_of '{src}' is not a known item")
+        continue
+    s_it = all_items[src]
+    if s_it.get("translation_of"):
+        err(f"{where}: translation_of must point at the original, not at another translation")
+    if s_it["language"] == lang:
+        err(f"{where}: translation_of points at an item in the same language")
+    if it.get("origin") == "translated":
+        if it.get("format") != s_it.get("format") or len(it.get("positions", [])) != len(s_it.get("positions", [])):
+            err(f"{where}: a translated item keeps its source's format and positions (use origin 'adapted' otherwise)")
+        if it.get("format") == "mcq" and [c["id"] for c in it.get("choices", [])] != [c["id"] for c in s_it.get("choices", [])]:
+            err(f"{where}: a translated mcq keeps its source's choice ids")
 
 # ------------------------------------------------------------ intervention studies
 track_by_id = {t["id"]: t for t in tracks}

@@ -16,9 +16,10 @@ Bottom-up coverage, exam tracks, failure tags and model-side fixes. Goal stated 
 - Failure tags in grades (`failures`), counted by the scorer overall and per tradition. Definitions and suggested fixes: [docs/fixes.md](./docs/fixes.md).
 - Model-side fixes: `fixes/<id>/` (`system-prompt`, `reference`, `skill`), `--fix` in `scripts/openrouter_run.py` (recorded in `run.json` as `fix`), and `scripts/compare_runs.py` for baseline-vs-fix comparisons with a paired bootstrap interval. Format examples `example-attribution-prompt`, `example-37-practices-reference`.
 - Scorer 0.3.0: adds `failures` and `by_paper`. No item score changes, so earlier results stay comparable.
-- New item format examples: `example-exam-example-en-0001`..`0002`.
+- Language as an axis ([docs/languages.md](./docs/languages.md)): item `origin` (`native`, `translated`, `adapted`) with `translation_of` forming parallel groups; translated items need a native-speaker `language` reviewer; the checker keeps translations parallel to their source. Scorer reports `by_language`, and each item row carries `language` and `parallel`. New `scripts/crosslingual.py` reports a model's score per language on shared questions and the cross-lingual gap.
+- New item format examples: `example-exam-example-en-0001`..`0002`, `example-core-zh-0001` (Chinese translation of `example-core-en-0001`).
 
-Track versions: core 0.1.0, theravada 0.1.0, tibetan 0.1.0, 37-practices 0.1.0, exam-example 0.1.0.
+Track versions: core 0.2.0, theravada 0.1.0, tibetan 0.1.0, 37-practices 0.1.0, exam-example 0.1.0.
 
 ## [0.2.0] - 2026-11-13
 
