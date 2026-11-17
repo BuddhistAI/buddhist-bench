@@ -19,7 +19,7 @@ Graders tag *what kind* of mistake each wrong answer makes (misattribution, inve
 
 Models are run through OpenRouter in several modes (closed-book, the provider's own web search, and a search tool whose every query we log), and **intervention studies** measure whether accurate, sourced material published about a text reaches AI answers, how fast, and through which models. Design: [docs/intervention-study.md](./docs/intervention-study.md).
 
-It is maintained in the open by Buddhist organizations working together. Founded by WeBuddhist.
+It is maintained in the open by Buddhist organizations and individuals working together. Anyone can contribute; see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 > **Status: 0.4.0, scaffold.** The structure, schema, scorer and rules are in place. The only items so far are clearly marked format examples (`example.jsonl`); there is no real data yet. See [CONTRIBUTING.md](./CONTRIBUTING.md) to help write it.
 

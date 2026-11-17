@@ -31,7 +31,7 @@ Leaderboard rows cite the release and the track version (`track.json`); never co
 
 ## Licenses and credits
 
-BuddhistBench's own items, code and docs: MIT, founded and maintained by WeBuddhist. Imported tracks keep their source license:
+BuddhistBench's own items, code and docs: MIT, made by the BuddhistAI contributors. Imported tracks keep their source license:
 
 {{CREDITS}}
 
