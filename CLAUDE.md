@@ -1,5 +1,16 @@
 # Notes for agents working in this repo
 
+## Start here (every BuddhistAI repo)
+
+- Read the maintainer handbook first: https://buddhistai.github.io/knowledge-base/handbook/ (source: BuddhistAI/knowledge-base `handbook/`). Follow its rules and conventions.
+- Check the Development board for cards assigned to you: https://github.com/orgs/BuddhistAI/projects/3. Status and next steps: `handbook/status.md`.
+- Rules: plain English for non-native readers, no idioms. "Buddhist tasks", not only texts. "Top performance" and "Best value". Neutral credits: WeBuddhist is one contributor among others. Never invent data, scores, votes or links. Never edit generated files by hand.
+- buddhist-benchmarks stays clean (short `result.json`, outputs, scores). Provenance records (`buddhistai/provenance@1`) live in the skill's own repo.
+- When you change something the handbook describes, update the handbook in the same pull request.
+- This repo: BuddhistBench, a Q&A benchmark of Buddhist knowledge (one benchmark among others). Run `python3 scripts/check.py`.
+
+## This repo
+
 - Layout: `tracks/<track>/data/<lang>/<split>.jsonl`. Track IDs in `tracks/index.json`; tradition IDs in `taxonomy/traditions.json`; language codes in `taxonomy/languages.json` (keep in sync with buddhist-skills `languages.json`).
 - One item per line; schema in `schema/item.schema.json`, explained in `docs/schema.md`. IDs are permanent: never reuse or renumber.
 - Never invent real items. Example items live only in `example.jsonl` with `example: true`. Real items need human authors and two human reviewers (same-tradition and cross-tradition).
