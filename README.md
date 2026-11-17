@@ -106,7 +106,7 @@ Each release is published automatically to Hugging Face at [BuddhistAI/buddhist-
 ## Related
 
 - [BuddhistAI/buddhist-benchmarks](https://github.com/BuddhistAI/buddhist-benchmarks): task benchmarks for text-processing skills (TOC extraction, alignment, translation)
-- [BuddhistAI/buddhist-skills](https://github.com/BuddhistAI/buddhist-skills): agent skills for Buddhist texts
+- [BuddhistAI/buddhist-skills](https://github.com/BuddhistAI/buddhist-skills): AI skills for Buddhist tasks
 
 ## License
 
