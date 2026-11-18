@@ -7,6 +7,8 @@
 - Rules: plain English for non-native readers, no idioms. "Buddhist tasks", not only texts. "Top performance" and "Best value". Neutral credits: WeBuddhist is one contributor among others. Never invent data, scores, votes or links. Never edit generated files by hand.
 - buddhist-benchmarks stays clean (short `result.json`, outputs, scores). Provenance records (`buddhistai/provenance@1`) live in the skill's own repo.
 - When you change something the handbook describes, update the handbook in the same pull request.
+- Before you change anything users see (pages, forms, install steps, app screens), write a design in `docs/designs/` and run an EGM review with our personas: skills `buddhistai-elephant` and `buddhistai-ux-review` (handbook `ux.md`). Small text or bug fixes skip this.
+- EGM artifact directory: docs/designs
 - This repo: BuddhistBench, a Q&A benchmark of Buddhist knowledge (one benchmark among others). Run `python3 scripts/check.py`.
 
 ## This repo
